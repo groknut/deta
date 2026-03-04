@@ -1,10 +1,15 @@
-
 package main
 
 import (
+	deta "deta/util"
 	"fmt"
+	"os"
 )
 
 func main() {
-	fmt.Println("Hello, world!")
+	if err := deta.StartUtil(); err != nil{
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	// fmt.Println("Hello, world!")
 }
