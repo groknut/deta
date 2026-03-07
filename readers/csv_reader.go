@@ -12,27 +12,27 @@ import (
 )
 
 // Структура для модели
-type modelReaderCSV struct {
-	path string
-	cursor int
-	title *[]string
-	rows *[][]string
-	ctx	context.Context
+type ModelReaderCSV struct {
+	Path string
+	Cursor int
+	Title *[]string
+	Rows *[][]string
+	Ctx	context.Context
 }
 
 //Старт работы модели
 func StartReaderCSV(ctx context.Context, pathFile string) error{
 	title := make([]string,0)
 	rows :=  make([][]string,0)
-	model := modelReaderCSV{path: pathFile, 
-							ctx: ctx,
-							title: &title,
-							rows: &rows}
+	model := ModelReaderCSV{Path: pathFile, 
+							Ctx: ctx,
+							Title: &title,
+							Rows: &rows}
 
 
 	model.Init()						
 	select{
-	case <-model.ctx.Done():
+	case <-model.Ctx.Done():
 		return errors.New("Error reader")
 	default:
 
@@ -44,11 +44,11 @@ func StartReaderCSV(ctx context.Context, pathFile string) error{
 
 
 // Отрисовка модели 
-func (m modelReaderCSV) View() string{
-	s := strings.Join(*m.title, "\t")
-	for i, row := range *m.rows{
+func (m ModelReaderCSV) View() string{
+	s := strings.Join(*m.Title, "\t")
+	for i, row := range *m.Rows{
 		cursor := " "
-		if m.cursor == i{
+		if m.Cursor == i{
 			cursor = ">"
 		}
 		s += cursor + strings.Join(row, "\t")
@@ -58,7 +58,7 @@ func (m modelReaderCSV) View() string{
 }
 
 // Обновление инфлормации в таблицы
-func(m modelReaderCSV) Update(msg tea.Msg) (tea.Model, tea.Cmd){
+func(m ModelReaderCSV) Update(msg tea.Msg) (tea.Model, tea.Cmd){
 	switch msg := msg.(type){
 	case tea.KeyMsg:
 
@@ -66,12 +66,12 @@ func(m modelReaderCSV) Update(msg tea.Msg) (tea.Model, tea.Cmd){
 		case "ctrl+c", "q":
 			return m, tea.Quit
 		case "up":
-			if m.cursor > 0{
-				m.cursor--
+			if m.Cursor > 0{
+				m.Cursor--
 			}
 		case "down":
-			if m.cursor < len(*m.rows)-1{
-				m.cursor++
+			if m.Cursor < len(*m.Rows)-1{
+				m.Cursor++
 			}
 		}
 	}
@@ -80,15 +80,15 @@ func(m modelReaderCSV) Update(msg tea.Msg) (tea.Model, tea.Cmd){
 }
 
 // Инициализируем нашу модель
-func(m modelReaderCSV) Init() tea.Cmd{
+func(m ModelReaderCSV) Init() tea.Cmd{
 	return nil
 }
 
 //Чтение csv файла
-func(m modelReaderCSV) readCSV(){
-	file, err := os.Open(m.path)
+func(m ModelReaderCSV) readCSV(){
+	file, err := os.Open(m.Path)
 	if err != nil{
-		m.ctx.Deadline()
+		m.Ctx.Deadline()
 	}
 	defer file.Close()
 	flagTitle := true
@@ -99,23 +99,23 @@ func(m modelReaderCSV) readCSV(){
 		line = strings.TrimSpace(line)
 		re, err := regexp.Compile(`[,;|\t]`)
 		if err != nil{
-			m.ctx.Deadline()
+			m.Ctx.Deadline()
 		}
 		words := re.Split(line,-1)
 		if flagTitle{
-			tempTitle := append(*m.title, words...)
-			*m.title = tempTitle
+			tempTitle := append(*m.Title, words...)
+			*m.Title = tempTitle
 			flagTitle = false
 		}else{
 			 
-			tempRows := append(*m.rows, words)
-			*m.rows = tempRows
+			tempRows := append(*m.Rows, words)
+			*m.Rows = tempRows
 		}
 
 	}
 
 	if err := scanner.Err(); err != nil{
-		m.ctx.Deadline()
+		m.Ctx.Deadline()
 	}
 
 
