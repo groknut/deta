@@ -90,7 +90,7 @@ func(m ModelReaderCSV) Init() tea.Cmd{
 }
 
 //Чтение csv файла
-func(m ModelReaderCSV) readCSV(){
+func(m ModelReaderCSV) ReadCSV(){
 	file, err := os.Open(m.Path)
 	if err != nil{
 		m.CtxCancel()
