@@ -3,11 +3,12 @@ package test
 import (
 	"context"
 	"deta/readers"
+	"fmt"
 	"path/filepath"
 	"testing"
 )
 
-func TestReaderCSV(t *testing.T) {
+func testReaderCSV() {
 	path, _ := filepath.Abs(".")
 	path = filepath.Join(path,"file.csv")
 	readContext, readCancel := context.WithCancel(context.Background())
@@ -22,4 +23,19 @@ func TestReaderCSV(t *testing.T) {
 							Rows: &rows,
 							CtxCancel: readCancel}
 	model.ReadCSV()
+	fmt.Println(model.Title)
+	fmt.Println(model.Rows)
+}
+
+func testModelTea(){
+	path, _ := filepath.Abs(".")
+	path = filepath.Join(path,"file.csv")
+	readContext, readCancel := context.WithCancel(context.Background())
+
+	readers.StartReaderCSV(readContext,readCancel,path)
+}
+
+func TestMain(t *testing.T){
+	// testReaderCSV()
+	testModelTea()
 }
