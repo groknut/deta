@@ -8,6 +8,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/charmbracelet/lipgloss"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -21,11 +22,15 @@ type ModelReaderCSV struct {
 	Rows *[][]string
 	CtxCancel context.CancelFunc
 	Ctx context.Context
+	Style struct{
+		title lipgloss.Style
+		item lipgloss.Style
+		cancel lipgloss.Style
+	}
 }
 
 //Старт работы модели
 func StartReaderCSV(ctx context.Context,ctxCancel context.CancelFunc, pathFile string) error{
-
 	title := make([]string,0)
 	rows :=  make([][]string,0)
 	model := ModelReaderCSV{Path: pathFile, 
@@ -33,14 +38,20 @@ func StartReaderCSV(ctx context.Context,ctxCancel context.CancelFunc, pathFile s
 							Title: &title,
 							Rows: &rows,
 							CtxCancel: ctxCancel}
+	model.Style.item = lipgloss.NewStyle().Background(lipgloss.Color("#C40361"))
+	model.Style.title = lipgloss.NewStyle().Background(lipgloss.Color("#8C0286"))
 
-
-	model.Init()						
+	model.Init()	
+	p := tea.NewProgram(model)
+						
 	select{
 	case <-model.Ctx.Done():
 		return errors.New("Error reader")
 	default:
-
+		go model.ReadCSV()
+	}
+	if _, err := p.Run(); err != nil {
+		return err
 	}
 	
 
@@ -50,13 +61,13 @@ func StartReaderCSV(ctx context.Context,ctxCancel context.CancelFunc, pathFile s
 
 // Отрисовка модели 
 func (m ModelReaderCSV) View() string{
-	s := strings.Join(*m.Title, "\t")
+	s := m.Style.title.Render(strings.Join(*m.Title, "\t"))+"\n"
 	for i, row := range *m.Rows{
 		cursor := " "
 		if m.Cursor == i{
 			cursor = ">"
 		}
-		s += cursor + strings.Join(row, "\t")
+		s += cursor + strings.Join(row, "\t")+"\n"
 	}
 	s += "q - exit"
 	return s
@@ -73,6 +84,7 @@ func(m ModelReaderCSV) Update(msg tea.Msg) (tea.Model, tea.Cmd){
 		case "up":
 			if m.Cursor > 0{
 				m.Cursor--
+
 			}
 		case "down":
 			if m.Cursor < len(*m.Rows)-1{

@@ -1,12 +1,13 @@
 package util
 
 import (
+	"deta/readers"
 	"errors"
 	"fmt"
 	"os"
 	"strings"
+	"context"
 	// "path/filepath"
-	// "util/readers"
 )
 
 //Функция для запуска утилиты
@@ -32,10 +33,14 @@ func StartUtil() error{
 		typeFile = splitFileName[lenghtNameFile-1]
 	}
 
+
+	fileContext, contextCancel := context.WithCancel(context.Background())
+
 	//Вызывать методы для обработки файлов вызывать здесь
 	switch typeFile{
 	case "csv":
-		fmt.Println(typeFile)
+		// fmt.Println(typeFile)
+		readers.StartReaderCSV(fileContext,contextCancel,os.Args[1])
 	case "json":
 		fmt.Println(typeFile)
 	case "hex":
