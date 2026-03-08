@@ -11,23 +11,28 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
+
+
 // Структура для модели
 type ModelReaderCSV struct {
 	Path string
 	Cursor int
 	Title *[]string
 	Rows *[][]string
-	Ctx	context.Context
+	CtxCancel context.CancelFunc
+	Ctx context.Context
 }
 
 //Старт работы модели
-func StartReaderCSV(ctx context.Context, pathFile string) error{
+func StartReaderCSV(ctx context.Context,ctxCancel context.CancelFunc, pathFile string) error{
+
 	title := make([]string,0)
 	rows :=  make([][]string,0)
 	model := ModelReaderCSV{Path: pathFile, 
 							Ctx: ctx,
 							Title: &title,
-							Rows: &rows}
+							Rows: &rows,
+							CtxCancel: ctxCancel}
 
 
 	model.Init()						
@@ -88,7 +93,7 @@ func(m ModelReaderCSV) Init() tea.Cmd{
 func(m ModelReaderCSV) readCSV(){
 	file, err := os.Open(m.Path)
 	if err != nil{
-		m.Ctx.Deadline()
+		m.CtxCancel()
 	}
 	defer file.Close()
 	flagTitle := true
@@ -99,7 +104,7 @@ func(m ModelReaderCSV) readCSV(){
 		line = strings.TrimSpace(line)
 		re, err := regexp.Compile(`[,;|\t]`)
 		if err != nil{
-			m.Ctx.Deadline()
+			m.CtxCancel()
 		}
 		words := re.Split(line,-1)
 		if flagTitle{
@@ -115,7 +120,7 @@ func(m ModelReaderCSV) readCSV(){
 	}
 
 	if err := scanner.Err(); err != nil{
-		m.Ctx.Deadline()
+		m.CtxCancel()
 	}
 
 
