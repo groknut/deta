@@ -12,12 +12,14 @@ func TestReaderCSV(t *testing.T) {
 	path = filepath.Join(path,"file.csv")
 	readContext, readCancel := context.WithCancel(context.Background())
 
-	ctx := ro
+	
 
 	title := make([]string,0)
 	rows :=  make([][]string,0)
 	model := readers.ModelReaderCSV{Path: path, 
-							Ctx: ctx,
+							Ctx: readContext,
 							Title: &title,
-							Rows: &rows}
+							Rows: &rows,
+							CtxCancel: readCancel}
+	model.ReadCSV()
 }
