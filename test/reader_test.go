@@ -1,41 +1,44 @@
 package test
 
 import (
-	"context"
-	"deta/readers"
-	"fmt"
-	"path/filepath"
-	"testing"
+    "fmt"
+    "os"
+    "os/exec"
+    "path/filepath"
+    "testing"
+    "time"
 )
 
-func testReaderCSV() {
-	path, _ := filepath.Abs(".")
-	path = filepath.Join(path,"file.csv")
-	readContext, readCancel := context.WithCancel(context.Background())
-
-	
-
-	title := make([]string,0)
-	rows :=  make([][]string,0)
-	model := readers.ModelReaderCSV{Path: path, 
-							Ctx: readContext,
-							Title: &title,
-							Rows: &rows,
-							CtxCancel: readCancel}
-	model.ReadCSV()
-	fmt.Println(model.Title)
-	fmt.Println(model.Rows)
+func testModelTea(com string, arr []string) {
+    cmd := exec.Command(com, arr...)
+    
+    cmd.Stdin = os.Stdin
+    cmd.Stdout = os.Stdout
+    cmd.Stderr = os.Stderr
+    
+    err := cmd.Start()
+    if err != nil {
+        fmt.Printf("Ошибка запуска: %v\n", err)
+        return
+    }
+    
+    time.Sleep(2 * time.Second)
+    err = cmd.Wait()
+    if err != nil {
+        fmt.Printf("Программа завершилась с ошибкой: %v\n", err)
+    }
 }
 
-func testModelTea(){
-	path, _ := filepath.Abs(".")
-	path = filepath.Join(path,"file.csv")
-	readContext, readCancel := context.WithCancel(context.Background())
-
-	readers.StartReaderCSV(readContext,readCancel,path)
-}
-
-func TestMain(t *testing.T){
-	// testReaderCSV()
-	testModelTea()
+func TestMain(t *testing.T) {
+    if testing.Short() {
+        t.Skip("Skipping TUI test in short mode")
+    }
+    
+    testDir, _ := filepath.Abs(".")
+    root := filepath.Dir(testDir)
+    mainPath := filepath.Join(root, "main.go")
+    csvPath := filepath.Join(root, "file.csv")
+    fmt.Printf("Запуск TUI с файлом: %s\n", csvPath)
+    
+    testModelTea("go", []string{"run", mainPath, csvPath})
 }
