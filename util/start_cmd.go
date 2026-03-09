@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	"context"
 	// "path/filepath"
 )
 
@@ -33,14 +32,11 @@ func StartUtil() error{
 		typeFile = splitFileName[lenghtNameFile-1]
 	}
 
-
-	fileContext, contextCancel := context.WithCancel(context.Background())
-
 	//Вызывать методы для обработки файлов вызывать здесь
 	switch typeFile{
 	case "csv":
 		// fmt.Println(typeFile)
-		readers.StartReaderCSV(fileContext,contextCancel,os.Args[1])
+		readers.StartReaderCSV(os.Args[1])
 	case "json":
 		fmt.Println(typeFile)
 	case "hex":
