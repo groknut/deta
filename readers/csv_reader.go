@@ -2,16 +2,21 @@ package readers
 
 import (
 	"bufio"
-	"context"
-	"errors"
 	"os"
 	"regexp"
 	"strings"
 
+	"github.com/charmbracelet/lipgloss"
+	"github.com/evertras/bubble-table/table"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
+type csvLoadedMsg struct {
+    title []string
+    rows  [][]string
+}
 
+type csvErrorMsg error
 
 // Структура для модели
 type ModelReaderCSV struct {
@@ -19,110 +24,140 @@ type ModelReaderCSV struct {
 	Cursor int
 	Title *[]string
 	Rows *[][]string
-	CtxCancel context.CancelFunc
-	Ctx context.Context
+	Table table.Model
+	Style struct{
+		Title lipgloss.Style
+		Item lipgloss.Style
+		Cancel lipgloss.Style
+	}
 }
 
 //Старт работы модели
-func StartReaderCSV(ctx context.Context,ctxCancel context.CancelFunc, pathFile string) error{
+func StartReaderCSV(pathFile string) error{
+title := make([]string, 0)
+    rows := make([][]string, 0)
+    model := ModelReaderCSV{
+        Path:  pathFile,
+        Title: &title,
+        Rows:  &rows,
+    }
+    model.Style.Item = lipgloss.NewStyle().Background(lipgloss.Color("#C40361"))
+    model.Style.Title = lipgloss.NewStyle().Background(lipgloss.Color("#8C0286"))
 
-	title := make([]string,0)
-	rows :=  make([][]string,0)
-	model := ModelReaderCSV{Path: pathFile, 
-							Ctx: ctx,
-							Title: &title,
-							Rows: &rows,
-							CtxCancel: ctxCancel}
-
-
-	model.Init()						
-	select{
-	case <-model.Ctx.Done():
-		return errors.New("Error reader")
-	default:
-
-	}
-	
-
+    p := tea.NewProgram(model)
+    if _, err := p.Run(); err != nil {
+        return err
+    }
 	return nil
 }
 
 
 // Отрисовка модели 
 func (m ModelReaderCSV) View() string{
-	s := strings.Join(*m.Title, "\t")
-	for i, row := range *m.Rows{
-		cursor := " "
-		if m.Cursor == i{
-			cursor = ">"
-		}
-		s += cursor + strings.Join(row, "\t")
-	}
-	s += "q - exit"
-	return s
+	return m.Table.View() + "\n\n↑/↓: navigate • q: quit"
 }
 
-// Обновление инфлормации в таблицы
-func(m ModelReaderCSV) Update(msg tea.Msg) (tea.Model, tea.Cmd){
-	switch msg := msg.(type){
-	case tea.KeyMsg:
+// Чтение файла
+func readCSV(path string) tea.Cmd {
+    return func() tea.Msg {
+        file, err := os.Open(path)
+        if err != nil {
+            return csvErrorMsg(err)
+        }
+        defer file.Close()
 
-		switch msg.String(){
-		case "ctrl+c", "q":
-			return m, tea.Quit
-		case "up":
-			if m.Cursor > 0{
-				m.Cursor--
-			}
-		case "down":
-			if m.Cursor < len(*m.Rows)-1{
-				m.Cursor++
-			}
-		}
-	}
+        title := make([]string, 0)
+        rows := make([][]string, 0)
+        flagTitle := true
 
-	return m, nil
+        scanner := bufio.NewScanner(file)
+        for scanner.Scan() {
+            line := scanner.Text()
+            line = strings.TrimSpace(line)
+            re, err := regexp.Compile(`[,;|\t]`)
+            if err != nil {
+                return csvErrorMsg(err)
+            }
+            words := re.Split(line, -1)
+            if flagTitle {
+                title = append(title, words...)
+                flagTitle = false
+            } else {
+                rows = append(rows, words)
+            }
+        }
+
+        if err := scanner.Err(); err != nil {
+            return csvErrorMsg(err)
+        }
+
+        return csvLoadedMsg{title: title, rows: rows}
+    }
 }
 
 // Инициализируем нашу модель
 func(m ModelReaderCSV) Init() tea.Cmd{
-	return nil
+	return readCSV(m.Path)
 }
 
-//Чтение csv файла
-func(m ModelReaderCSV) ReadCSV(){
-	file, err := os.Open(m.Path)
-	if err != nil{
-		m.CtxCancel()
-	}
-	defer file.Close()
-	flagTitle := true
+// Обновление таблицы
+func (m ModelReaderCSV) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+    switch msg := msg.(type) {
+    case csvLoadedMsg:
+        m.Title = &msg.title
+        m.Rows = &msg.rows
+        width := len(*m.Title)
+        columns := make([]table.Column, width)
+        for i, titleStr := range *m.Title {
+            maxWidth := len(titleStr)
+            for _, row := range *m.Rows {
+                if i < len(row) && len(row[i]) > maxWidth {
+                    maxWidth = len(row[i])
+                }
+            }
+            columns[i] = table.NewColumn(titleStr, titleStr, maxWidth+2)
+        }
 
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan(){
-		line := scanner.Text()
-		line = strings.TrimSpace(line)
-		re, err := regexp.Compile(`[,;|\t]`)
-		if err != nil{
-			m.CtxCancel()
+        tableRows := make([]table.Row, 0, len(*m.Rows))
+        for _, row := range *m.Rows {
+            rowData := table.RowData{}
+            for i := range columns {
+                if i < len(row) {
+                    rowData[(*m.Title)[i]] = row[i]
+                } else {
+                    rowData[(*m.Title)[i]] = ""
+                }
+            }
+            tableRows = append(tableRows, table.NewRow(rowData))
+        }
+
+        m.Table = table.New(columns).
+            WithRows(tableRows).
+            Focused(true).
+            WithPageSize(20).
+            HeaderStyle(m.Style.Title).
+            HighlightStyle(m.Style.Item)
+
+        return m, nil
+
+    case csvErrorMsg:
+        return m, tea.Quit
+
+    case tea.KeyMsg:
+        switch msg.String(){
+		case "ctrl+c", "q":
+			return m, tea.Quit
+		case "up", "down":
+			
+			var cmd tea.Cmd
+			m.Table, cmd = m.Table.Update(msg)
+			return m, cmd
 		}
-		words := re.Split(line,-1)
-		if flagTitle{
-			tempTitle := append(*m.Title, words...)
-			*m.Title = tempTitle
-			flagTitle = false
-		}else{
-			 
-			tempRows := append(*m.Rows, words)
-			*m.Rows = tempRows
-		}
 
-	}
+    case tea.WindowSizeMsg:
+        m.Table = m.Table.WithMaxTotalWidth(msg.Width)
+		m.Table = m.Table.WithPageSize(msg.Height - 5)
+    }
 
-	if err := scanner.Err(); err != nil{
-		m.CtxCancel()
-	}
-
-
-
+    return m, nil
 }
