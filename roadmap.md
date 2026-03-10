@@ -31,26 +31,15 @@ deta -c config.toml
 
 ```toml
 control = "vim"
+rows = 10 # для табличных представлений
 ```
 
 **Режимы управления:**
 |**Mode**|**Control**|
 |-------|-------|
-|vim|hjkl|
-|default|arrows|
+|vim|hjklf|
+|default|arrowsf|
 
-
-
-**Конфигурация:**
-
-
-Сценарий вызова:
-```bash
-deta file.csv
-# или
-deta -h file.csv
-```
-
-Стек:
+**Стек:**
 1. Основной язык: golang
 2. Библиотеки: bubble tea, testing, стандартные golang библиотеки
