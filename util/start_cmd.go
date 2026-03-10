@@ -5,37 +5,32 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"slices"
 	"strings"
 	// "path/filepath"
 )
 
-//Функция для запуска утилиты
-func StartUtil() error{
-	quantityArgs := len(os.Args)
-	fmt.Println(quantityArgs)
-	if quantityArgs < 2{
-		return errors.New("File not transferred")
-	}
-	if os.Args[1] == "-h" || os.Args[1] =="--help"{
-		fmt.Println(`Commands...`)
+// Функция для запуска утилиты
+func StartUtil() error {
+
+	if len(os.Args) < 2 || slices.Contains(HELP_ARGS, os.Args[1]) {
+		fmt.Print(HELP_MESSAGE)
 		return nil
 	}
 
-
 	var typeFile string
-	splitFileName := strings.Split(os.Args[1],".")
+	splitFileName := strings.Split(os.Args[1], ".")
 
-	lenghtNameFile := len(splitFileName) 
-	if lenghtNameFile == 2{
+	lenghtNameFile := len(splitFileName)
+	if lenghtNameFile == 2 {
 		typeFile = splitFileName[1]
-	}else{
+	} else {
 		typeFile = splitFileName[lenghtNameFile-1]
 	}
 
 	//Вызывать методы для обработки файлов вызывать здесь
-	switch typeFile{
+	switch typeFile {
 	case "csv":
-		// fmt.Println(typeFile)
 		readers.StartReaderCSV(os.Args[1])
 	case "json":
 		fmt.Println(typeFile)
@@ -45,6 +40,6 @@ func StartUtil() error{
 	default:
 		return errors.New("Undefine file extension")
 	}
-	
+
 	return nil
 }
