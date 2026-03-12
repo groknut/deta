@@ -2,13 +2,14 @@ package readers
 
 import (
 	"bufio"
+	"fmt"
 	"os"
 	"regexp"
 	"strings"
 
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/evertras/bubble-table/table"
-	tea "github.com/charmbracelet/bubbletea"
 )
 
 type csvLoadedMsg struct {
@@ -32,34 +33,50 @@ type ModelReaderCSV struct {
 	}
 }
 
-//Старт работы модели
-func StartReaderCSV(pathFile string) error{
-title := make([]string, 0)
-    rows := make([][]string, 0)
-    model := ModelReaderCSV{
-        Path:  pathFile,
-        Title: &title,
-        Rows:  &rows,
-    }
-    model.Style.Item = lipgloss.NewStyle().Background(lipgloss.Color("#C40361"))
-    model.Style.Title = lipgloss.NewStyle().Background(lipgloss.Color("#8C0286"))
+type CSVReader struct{
+    path string
+    model *ModelReaderCSV
+}
 
-    p := tea.NewProgram(model)
-    if _, err := p.Run(); err != nil {
+func NewCSVReader() *CSVReader{
+    return &CSVReader{
+        model: &ModelReaderCSV{},
+    }
+}
+
+//Запуск модели
+func(r *CSVReader) Run() error{
+    p := tea.NewProgram(r.model)
+    if _,err := p.Run(); err != nil{
         return err
     }
-	return nil
+     
+    return nil
 }
 
 
 // Отрисовка модели 
-func (m ModelReaderCSV) View() string{
-	return m.Table.View() + "\n\n↑/↓: navigate • q: quit"
+func (m *ModelReaderCSV) View() string{
+	return m.Table.View() + "\n↑/↓: navigate • q: quit"
+}
+
+func checkFile(path string) error{
+    _, err := os.Stat(path)
+    if err != nil{
+        if os.IsNotExist(err){
+            return err
+        }
+    }
+    return nil
 }
 
 // Чтение файла
 func readCSV(path string) tea.Cmd {
     return func() tea.Msg {
+        if err := checkFile(path); err != nil{
+            fmt.Println("File don't exists in directory")
+            return  csvErrorMsg(err)
+        }
         file, err := os.Open(path)
         if err != nil {
             return csvErrorMsg(err)
@@ -95,13 +112,32 @@ func readCSV(path string) tea.Cmd {
     }
 }
 
+// Инициализация интерфейса
+func(r *CSVReader) Init(path string) error{
+    r.path = path
+	title := make([]string, 0)
+	rows := make([][]string, 0)
+	
+	r.model = &ModelReaderCSV{
+		Path:  path,
+		Title: &title,
+		Rows:  &rows,
+	}
+	
+	r.model.Style.Item = lipgloss.NewStyle().Background(lipgloss.Color("#C40361"))
+	r.model.Style.Title = lipgloss.NewStyle().Background(lipgloss.Color("#8C0286"))
+	
+	return nil
+}
+
 // Инициализируем нашу модель
-func(m ModelReaderCSV) Init() tea.Cmd{
+func(m *ModelReaderCSV) Init() tea.Cmd{
+    
 	return readCSV(m.Path)
 }
 
 // Обновление таблицы
-func (m ModelReaderCSV) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m *ModelReaderCSV) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
     switch msg := msg.(type) {
     case csvLoadedMsg:
         m.Title = &msg.title

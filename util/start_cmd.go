@@ -6,13 +6,14 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	// "path/filepath"
+	"path/filepath"
 )
+
 
 //Функция для запуска утилиты
 func StartUtil() error{
 	quantityArgs := len(os.Args)
-	fmt.Println(quantityArgs)
+	// fmt.Println(quantityArgs)
 	if quantityArgs < 2{
 		return errors.New("File not transferred")
 	}
@@ -21,29 +22,22 @@ func StartUtil() error{
 		return nil
 	}
 
-
-	var typeFile string
-	splitFileName := strings.Split(os.Args[1],".")
-
-	lenghtNameFile := len(splitFileName) 
-	if lenghtNameFile == 2{
-		typeFile = splitFileName[1]
-	}else{
-		typeFile = splitFileName[lenghtNameFile-1]
-	}
+	filename := os.Args[1]
+    ext := filepath.Ext(filename)
+    typeFile := strings.TrimPrefix(ext, ".")
 
 	//Вызывать методы для обработки файлов вызывать здесь
-	switch typeFile{
-	case "csv":
-		// fmt.Println(typeFile)
-		readers.StartReaderCSV(os.Args[1])
-	case "json":
-		fmt.Println(typeFile)
-	case "hex":
-		fmt.Println(typeFile)
+	reader, err := readers.GetReader(typeFile)
+	if err != nil{
+		// Вызов дефолтного пейджера
+		return nil
+	}
+	if err := reader.Init(os.Args[1]);err != nil{
+		return errors.New("Undefine error")
+	}
 
-	default:
-		return errors.New("Undefine file extension")
+	if err := reader.Run();err != nil{
+		return errors.New("Failed to start reader")
 	}
 	
 	return nil
