@@ -184,8 +184,11 @@ func (m *ModelReaderCSV) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "ctrl+c", "q":
 			return m, tea.Quit
 		case "up", "down":
-			
 			var cmd tea.Cmd
+			m.Table, cmd = m.Table.Update(msg)
+			return m, cmd
+        case "left", "right":
+            var cmd tea.Cmd
 			m.Table, cmd = m.Table.Update(msg)
 			return m, cmd
 		}
