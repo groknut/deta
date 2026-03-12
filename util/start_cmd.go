@@ -5,28 +5,23 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"slices"
 	"strings"
 	"path/filepath"
 )
 
-
-//Функция для запуска утилиты
 func StartUtil() error{
-	quantityArgs := len(os.Args)
-	// fmt.Println(quantityArgs)
-	if quantityArgs < 2{
-		return errors.New("File not transferred")
-	}
-	if os.Args[1] == "-h" || os.Args[1] =="--help"{
-		fmt.Println(`Commands...`)
+
+	filename := os.Args[1]
+
+	if len(os.Args) < 2 || slices.Contains(HELP_ARGS, filename) {
+		fmt.Print(HELP_MESSAGE)
 		return nil
 	}
 
-	filename := os.Args[1]
     ext := filepath.Ext(filename)
     typeFile := strings.TrimPrefix(ext, ".")
 
-	//Вызывать методы для обработки файлов вызывать здесь
 	reader, err := readers.GetReader(typeFile)
 	if err != nil{
 		// Вызов дефолтного пейджера
@@ -39,6 +34,6 @@ func StartUtil() error{
 	if err := reader.Run();err != nil{
 		return errors.New("Failed to start reader")
 	}
-	
+
 	return nil
 }
