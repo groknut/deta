@@ -1,7 +1,7 @@
 package util
 
 import (
-	"deta/readers"
+	"deta/internal/readers"
 	"errors"
 	"fmt"
 	"os"

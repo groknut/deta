@@ -1,51 +1,56 @@
 package readers
 
 import (
-	"bufio"
 	"fmt"
 	"os"
-	"regexp"
-	"strings"
+	// "regexp"
+	// "strings"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/evertras/bubble-table/table"
+
+    "deta/utils"
 )
 
-type csvLoadedMsg struct {
-    title []string
-    rows  [][]string
+type sqlLoaderMsg struct{
+	typeRows []string
+	titles []string
+	rows [][]string
 }
 
-type csvErrorMsg error
+type sqlErrorMsg error
 
 // Структура для модели
-type ModelReaderCSV struct {
+type ModelReaderSQL struct {
 	Path string
 	Cursor int
 	Title *[]string
 	Rows *[][]string
+	TypeRows *[]string
 	Table table.Model
 	Style struct{
 		Title lipgloss.Style
 		Item lipgloss.Style
 		Cancel lipgloss.Style
+		FontType lipgloss.Style
+		FontIndex lipgloss.Style
 	}
 }
 
-type CSVReader struct{
+type SQLReader struct{
     path string
-    model *ModelReaderCSV
+    model *ModelReaderSQL
 }
 
-func NewCSVReader() *CSVReader{
-    return &CSVReader{
-        model: &ModelReaderCSV{},
+func NewSQLReader() *SQLReader{
+    return &SQLReader{
+        model: &ModelReaderSQL{},
     }
 }
 
 //Запуск модели
-func(r *CSVReader) Run() error{
+func(r *SQLReader) Run() error{
     p := tea.NewProgram(r.model)
     if _,err := p.Run(); err != nil{
         return err
@@ -54,28 +59,16 @@ func(r *CSVReader) Run() error{
     return nil
 }
 
-
 // Отрисовка модели 
-func (m *ModelReaderCSV) View() string{
+func (m *ModelReaderSQL) View() string{
 	return m.Table.View() + "\n↑/↓: navigate • q: quit"
 }
 
-func checkFile(path string) error{
-    _, err := os.Stat(path)
-    if err != nil{
-        if os.IsNotExist(err){
-            return err
-        }
-    }
-    return nil
-}
-
-// Чтение файла
-func readCSV(path string) tea.Cmd {
+func readSQL(path string) tea.Cmd {
     return func() tea.Msg {
-        if err := checkFile(path); err != nil{
+        if err := utils.CheckFile(path); err != nil{
             fmt.Println("File don't exists in directory")
-            return  csvErrorMsg(err)
+            return  sqlErrorMsg(err)
         }
         file, err := os.Open(path)
         if err != nil {
@@ -85,63 +78,49 @@ func readCSV(path string) tea.Cmd {
 
         title := make([]string, 0)
         rows := make([][]string, 0)
-        flagTitle := true
+		typeRows := make([]string,0)
+        
 
-        scanner := bufio.NewScanner(file)
-        for scanner.Scan() {
-            line := scanner.Text()
-            line = strings.TrimSpace(line)
-            re, err := regexp.Compile(`[,;|\t]`)
-            if err != nil {
-                return csvErrorMsg(err)
-            }
-            words := re.Split(line, -1)
-            if flagTitle {
-                title = append(title, words...)
-                flagTitle = false
-            } else {
-                rows = append(rows, words)
-            }
-        }
+		// TODO код для чтения SQL файлов		
 
-        if err := scanner.Err(); err != nil {
-            return csvErrorMsg(err)
-        }
-
-        return csvLoadedMsg{title: title, rows: rows}
+        return sqlLoaderMsg{titles: title, rows: rows, typeRows: typeRows}
     }
 }
 
-// Инициализация интерфейса
-func(r *CSVReader) Init(path string) error{
+func(r *SQLReader) Init(path string) error{
     r.path = path
 	title := make([]string, 0)
 	rows := make([][]string, 0)
+	typeRows := make([]string, 0)
 	
-	r.model = &ModelReaderCSV{
+	r.model = &ModelReaderSQL{
 		Path:  path,
 		Title: &title,
 		Rows:  &rows,
+		TypeRows: &typeRows,
 	}
 	
-	r.model.Style.Item = lipgloss.NewStyle().Background(lipgloss.Color("#C40361"))
-	r.model.Style.Title = lipgloss.NewStyle().Background(lipgloss.Color("#8C0286"))
-	
+	r.model.Style.Item = lipgloss.NewStyle().Background(lipgloss.Color("#5CC0C2"))
+	r.model.Style.Title = lipgloss.NewStyle().Background(lipgloss.Color("#019395"))
+	r.model.Style.FontType = lipgloss.NewStyle().Foreground(lipgloss.Color("#6196A8"))
+	r.model.Style.FontIndex = lipgloss.NewStyle().Foreground(lipgloss.Color("#FEE16C"))
+
+
 	return nil
 }
 
 // Инициализируем нашу модель
-func(m *ModelReaderCSV) Init() tea.Cmd{
-    
-	return readCSV(m.Path)
+func(m *ModelReaderSQL) Init() tea.Cmd{
+	return readSQL(m.Path)
 }
 
 // Обновление таблицы
-func (m *ModelReaderCSV) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m *ModelReaderSQL) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
     switch msg := msg.(type) {
-    case csvLoadedMsg:
-        m.Title = &msg.title
+    case sqlLoaderMsg:
+        m.Title = &msg.titles
         m.Rows = &msg.rows
+		m.TypeRows = &msg.typeRows
         width := len(*m.Title)
         columns := make([]table.Column, width)
         for i, titleStr := range *m.Title {
@@ -200,3 +179,4 @@ func (m *ModelReaderCSV) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
     return m, nil
 }
+

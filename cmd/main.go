@@ -1,7 +1,7 @@
 package main
 
 import (
-	deta "deta/util"
+	deta "deta/pkg/util"
 	"fmt"
 	"os"
 )

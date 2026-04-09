@@ -1,7 +1,7 @@
 package readers
 
 import (
-	"deta/interfaces"
+	"deta/pkg/interfaces"
 	"errors"
 	// "deta/readers"
 )
