@@ -9,7 +9,7 @@ import (
 
 func test_terminal(com string,arr []string){
 	cmd := exec.Command(com, arr...)
-	output, err := cmd.Output()
+	output, err := cmd.CombinedOutput()
 	if err != nil{
 		print("\ntxt file error PASSED ",err,"\n")
 		return
