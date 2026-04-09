@@ -3,14 +3,16 @@ package readers
 import (
 	"fmt"
 	"os"
-	// "regexp"
-	// "strings"
+    "bufio"
+	"regexp"
+	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/evertras/bubble-table/table"
 
     "deta/utils"
+    parse "deta/internal/parse_sql"
 )
 
 type sqlLoaderMsg struct{
@@ -70,6 +72,7 @@ func readSQL(path string) tea.Cmd {
             fmt.Println("File don't exists in directory")
             return  sqlErrorMsg(err)
         }
+
         file, err := os.Open(path)
         if err != nil {
             return csvErrorMsg(err)
@@ -79,7 +82,30 @@ func readSQL(path string) tea.Cmd {
         title := make([]string, 0)
         rows := make([][]string, 0)
 		typeRows := make([]string,0)
-        
+        sqlQuerys := make([]string,0)
+
+        scanner := bufio.NewScanner(file)
+
+        re, err := regexp.Compile(`[,;|\t]`)
+        if err != nil {
+            return csvErrorMsg(err)
+        }
+
+
+        var sqlQuery string
+        for scanner.Scan() {
+            line := scanner.Text()
+            line = strings.TrimSpace(line)
+            sqlQuery += line
+            if strings.Contains(line, ";"){
+                sqlQuerys = append(sqlQuerys, sqlQuery)
+            }
+
+        }
+
+        if err := scanner.Err(); err != nil {
+            return csvErrorMsg(err)
+        }
 
 		// TODO код для чтения SQL файлов		
 
