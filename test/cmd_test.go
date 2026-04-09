@@ -24,11 +24,11 @@ func TestMain(t *testing.T){
 	mainPath := filepath.Join(root,"cmd/main.go")
 	fmt.Println(mainPath)
 	test_terminal("go",[]string{"run",mainPath,"-h"})
-	test_terminal("go",[]string{"run",mainPath,"test/file.csv"})
-	test_terminal("go",[]string{"run",mainPath,"test file/file.txt"})
-	test_terminal("go",[]string{"run",mainPath,"test/file.json"})
-	test_terminal("go",[]string{"run",mainPath,"test/file.hex"})
-	test_terminal("go",[]string{"run",mainPath,"-h","test/file.csv`"})
-	test_terminal("go",[]string{"run",mainPath,"test/file.json","-h"})
+	test_terminal("go",[]string{"run",mainPath,"test_file/file.csv"})
+	test_terminal("go",[]string{"run",mainPath,"test_file/file.txt"})
+	test_terminal("go",[]string{"run",mainPath,"test_file/file.json"})
+	test_terminal("go",[]string{"run",mainPath,"test_file/file.hex"})
+	test_terminal("go",[]string{"run",mainPath,"-h","test_test/file.csv`"})
+	test_terminal("go",[]string{"run",mainPath,"test_test/file.json","-h"})
 	
 }
