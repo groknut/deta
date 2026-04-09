@@ -21,15 +21,14 @@ func TestMain(t *testing.T){
 
 	testDir, _ := filepath.Abs(".")
 	root := filepath.Dir(testDir)
-
-	mainPath := filepath.Join(root,"main.go")
-
+	mainPath := filepath.Join(root,"cmd/main.go")
+	fmt.Println(mainPath)
 	test_terminal("go",[]string{"run",mainPath,"-h"})
 	test_terminal("go",[]string{"run",mainPath,"test/file.csv"})
-	test_terminal("go",[]string{"run",mainPath,"test/file.txt"})
+	test_terminal("go",[]string{"run",mainPath,"test file/file.txt"})
 	test_terminal("go",[]string{"run",mainPath,"test/file.json"})
 	test_terminal("go",[]string{"run",mainPath,"test/file.hex"})
 	test_terminal("go",[]string{"run",mainPath,"-h","test/file.csv`"})
 	test_terminal("go",[]string{"run",mainPath,"test/file.json","-h"})
-
+	
 }
