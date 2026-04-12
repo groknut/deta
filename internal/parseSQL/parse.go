@@ -22,7 +22,7 @@ func Parse(sqlquery string) Cell{
 		takeColums := regexp.MustCompile(`\(([^)]+)\)`)
 		allCol := takeColums.FindStringSubmatch(sqlquery)[0]
 		resultQuery = append(resultQuery, allCol)
-		return Cell{Query: resultQuery[1:], Flag: "t"}
+		return Cell{Query: resultQuery, Flag: "t"}
 	}
 	if slices.Contains(mode, "INSERT") && slices.Contains(mode,"INTO"){
 
