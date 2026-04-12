@@ -1,7 +1,6 @@
 package parse_sql
 
 import (
-	"fmt"
 	"regexp"
 	"slices"
 )
