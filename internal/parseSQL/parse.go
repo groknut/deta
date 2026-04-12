@@ -19,7 +19,9 @@ func Parse(sqlquery string) Cell{
 	mode := spaceSkip.Split(sqlquery,-1)
 	if slices.Contains(mode, "CREATE") && slices.Contains(mode, "TABLE"){
 		resultQuery = append(resultQuery, mode[2])
-		takeColums := regexp.MustCompile(`\(([^)]+)\)`)
+		// takeColums := regexp.MustCompile(`\(([^)]+)\)`)
+		takeColums := regexp.MustCompile(`\((.*?)\)`)
+
 		allCol := takeColums.FindStringSubmatch(sqlquery)[0]
 		resultQuery = append(resultQuery, allCol)
 		return Cell{Query: resultQuery, Flag: "t"}
