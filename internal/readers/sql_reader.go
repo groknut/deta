@@ -1,30 +1,34 @@
 package readers
 
 import (
+	"bufio"
+	"errors"
 	"fmt"
 	"os"
-    "bufio"
-	"regexp"
 	"strings"
+
+	// "text/template/parse"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/evertras/bubble-table/table"
 
-    "deta/utils"
-    parse "deta/internal/parse_sql"
+	parse "deta/internal/parseSQL"
+	"deta/utils"
 )
 
 type sqlLoaderMsg struct{
 	typeRows []string
 	titles []string
 	rows [][]string
+    name string
 }
 
 type sqlErrorMsg error
 
 // Структура для модели
 type ModelReaderSQL struct {
+    Name string
 	Path string
 	Cursor int
 	Title *[]string
@@ -82,23 +86,36 @@ func readSQL(path string) tea.Cmd {
         title := make([]string, 0)
         rows := make([][]string, 0)
 		typeRows := make([]string,0)
-        sqlQuerys := make([]string,0)
 
         scanner := bufio.NewScanner(file)
 
-        re, err := regexp.Compile(`[,;|\t]`)
+        
         if err != nil {
             return csvErrorMsg(err)
         }
 
-
+        resultModel := sqlLoaderMsg{}
         var sqlQuery string
         for scanner.Scan() {
             line := scanner.Text()
             line = strings.TrimSpace(line)
-            sqlQuery += line
             if strings.Contains(line, ";"){
-                sqlQuerys = append(sqlQuerys, sqlQuery)
+                sqlQuery += line
+                temp := parse.Parse(line)
+                switch temp.Flag {
+                case "t":
+                    resultModel.name = temp.Query[0]
+                    
+
+                case "r":
+                    if resultModel.name == ""{
+                        fmt.Println("Table don't exists")
+                        return csvErrorMsg(errors.New("Table don't exists"))
+                    }
+
+                }
+            } else{
+                sqlQuery += line + " "
             }
 
         }
@@ -109,7 +126,7 @@ func readSQL(path string) tea.Cmd {
 
 		// TODO код для чтения SQL файлов		
 
-        return sqlLoaderMsg{titles: title, rows: rows, typeRows: typeRows}
+        return resultModel
     }
 }
 
