@@ -20,7 +20,7 @@ func Parse(sqlquery string) Cell{
 	if slices.Contains(mode, "CREATE") && slices.Contains(mode, "TABLE"){
 		resultQuery = append(resultQuery, mode[3])
 		takeColums := regexp.MustCompile(`\(([^)]+)\)`)
-		allCol := takeColums.FindStringSubmatch(sqlquery)[1]
+		allCol := takeColums.FindStringSubmatch(sqlquery)[0]
 		resultQuery = append(resultQuery, allCol)
 		return Cell{Query: resultQuery, Flag: "t"}
 	}
