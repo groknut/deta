@@ -18,11 +18,11 @@ func Parse(sqlquery string) Cell{
 	spaceSkip := regexp.MustCompile(` +`)
 	mode := spaceSkip.Split(sqlquery,-1)
 	if slices.Contains(mode, "CREATE") && slices.Contains(mode, "TABLE"){
-		resultQuery = append(resultQuery, mode[3])
+		resultQuery = append(resultQuery, mode[2])
 		takeColums := regexp.MustCompile(`\(([^)]+)\)`)
 		allCol := takeColums.FindStringSubmatch(sqlquery)[0]
 		resultQuery = append(resultQuery, allCol)
-		return Cell{Query: resultQuery, Flag: "t"}
+		return Cell{Query: resultQuery[1:], Flag: "t"}
 	}
 	if slices.Contains(mode, "INSERT") && slices.Contains(mode,"INTO"){
 
