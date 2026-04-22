@@ -7,8 +7,6 @@ import (
 	"os"
 	"strings"
 
-	// "text/template/parse"
-
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/evertras/bubble-table/table"
@@ -40,7 +38,6 @@ type ModelReaderSQL struct {
 		Item lipgloss.Style
 		Cancel lipgloss.Style
 		FontType lipgloss.Style
-		FontIndex lipgloss.Style
 	}
 }
 
@@ -102,12 +99,13 @@ func readSQL(path string) tea.Cmd {
             if strings.Contains(line, ";"){
                 sqlQuery += line
                 temp := parse.Parse(line)
+                
                 switch temp.Flag {
                 case "t":
                     resultModel.name = temp.Query[0]
                     
 
-                case "r":
+                case "i":
                     if resultModel.name == ""{
                         fmt.Println("Table don't exists")
                         return csvErrorMsg(errors.New("Table don't exists"))
@@ -146,8 +144,6 @@ func(r *SQLReader) Init(path string) error{
 	r.model.Style.Item = lipgloss.NewStyle().Background(lipgloss.Color("#5CC0C2"))
 	r.model.Style.Title = lipgloss.NewStyle().Background(lipgloss.Color("#019395"))
 	r.model.Style.FontType = lipgloss.NewStyle().Foreground(lipgloss.Color("#6196A8"))
-	r.model.Style.FontIndex = lipgloss.NewStyle().Foreground(lipgloss.Color("#FEE16C"))
-
 
 	return nil
 }
