@@ -17,9 +17,6 @@ func read(path string) string{
 
 	scanner := bufio.NewScanner(file)
 
-	if err != nil {
-		return "Error of reading"
-	}
 	var sqlQuery string
 	for scanner.Scan() {
 		line := scanner.Text()
