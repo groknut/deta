@@ -9,6 +9,7 @@ import (
 // Словарь для вызова структур
 var FactoryTypeFile = map[string] func() interfaces.Reader{
 	"csv": func() interfaces.Reader { return NewCSVReader() },
+	"sql": func() interfaces.Reader { return NewSQLReader() },
 }
 
 // Подает метод для вызова чтения файлов

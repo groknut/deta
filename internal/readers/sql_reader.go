@@ -74,56 +74,69 @@ func readSQL(path string) tea.Cmd {
     return func() tea.Msg {
         if err := utils.CheckFile(path); err != nil{
             fmt.Println("File don't exists in directory")
-            return  sqlErrorMsg(err)
+            return sqlErrorMsg(err)
         }
 
         file, err := os.Open(path)
         if err != nil {
-            return csvErrorMsg(err)
+            return sqlErrorMsg(err) 
         }
         defer file.Close()
 
-        // regular expression for clearing comments
         re := regexp.MustCompile(`(--|#).*`)
-        // title := make([]string, 0)
-        // rows := make([][]string, 0)
         var titleDefalt parse.CellDefault
+        var resultModel sqlLoaderMsg
+        var sqlBuilder strings.Builder
 
         scanner := bufio.NewScanner(file)
-        resultModel := sqlLoaderMsg{}
-        var sqlQuery string
         for scanner.Scan() {
             line := scanner.Text()
             line = re.ReplaceAllString(line, "")
             line = strings.TrimSpace(line)
-            if strings.Contains(line, ";"){
-                sqlQuery += line
-                temp := parse.Parse(line)
+            if line == "" {
+                continue
+            }
+            
+            sqlBuilder.WriteString(line)
+            sqlBuilder.WriteString(" ")
+            
+            currentSQL := sqlBuilder.String()
+            if strings.Contains(currentSQL, ";") {
+                semicolonIdx := strings.Index(currentSQL, ";")
+                query := strings.TrimSpace(currentSQL[:semicolonIdx])
+                
+                temp := parse.Parse(query)
                 
                 switch temp.Flag {
                 case "t":
                     resultModel.name = temp.Query[0]
                     titleDefalt = parse.ParseTableCell(temp.Query[1])
                     resultModel.titles = titleDefalt.Title
-                    sqlQuery = ""
                 case "i":
-                    if resultModel.name == ""{
-                        fmt.Println("Table don't exists")
-                        return csvErrorMsg(errors.New("Table don't exists"))
+                    if resultModel.name == "" {
+                        return sqlErrorMsg(errors.New("Table don't exists"))
                     }
-                    resultModel.rows = parse.AddRowsOfModel(temp,titleDefalt)
-                    sqlQuery = ""
+                    resultModel.rows = parse.AddRowsOfModel(temp, titleDefalt)
                 }
-            } else{
-                sqlQuery += line + " "
+                
+                sqlBuilder.Reset()
+                if semicolonIdx+1 < len(currentSQL) {
+                    remaining := strings.TrimSpace(currentSQL[semicolonIdx+1:])
+                    if remaining != "" {
+                        sqlBuilder.WriteString(remaining)
+                    }
+                }
             }
-
         }
 
         if err := scanner.Err(); err != nil {
-            return csvErrorMsg(err)
-        }	
-
+            return sqlErrorMsg(err)
+        }
+        
+        if resultModel.name == "" {
+            return sqlErrorMsg(errors.New("No table found in SQL file"))
+        }
+        
         return resultModel
     }
 }

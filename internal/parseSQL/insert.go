@@ -2,6 +2,7 @@ package parse_sql
 
 import (
 	"slices"
+	"strconv"
 	"strings"
 )
 
@@ -9,24 +10,30 @@ import (
 type CellDefault struct{
 	Title []string
 	DefaultVal map[string]string
+	Index string
 }
 
 // Public function for getting default value
 func ParseTableCell(sqlTable string) CellDefault{
+	var idKey string
 	titleColumn := make([]string,0)
 	defaultval := make(map[string]string)
 	clearColumn := splitColumnTable(sqlTable)
 	for _, q := range clearColumn{
 		partsQuery := strings.Split(q, " ") 
 		idxDEFAULT := slices.Index(partsQuery, "DEFAULT")
+		idxPrimary := slices.Index(partsQuery, "PRIMARY")
 		if idxDEFAULT != -1{
 			defaultval[partsQuery[0]] = partsQuery[idxDEFAULT+1]
 		} else{
 			titleColumn = append(titleColumn, partsQuery[0])
 		}
+		if idxPrimary != -1{
+			idKey = partsQuery[0]
+		}
 	}
 
-	return CellDefault{Title: titleColumn, DefaultVal: defaultval}
+	return CellDefault{Title: titleColumn, DefaultVal: defaultval, Index: idKey}
 }
 
 // Private function to split column of query
@@ -85,6 +92,9 @@ func AddRowsOfModel(insertInto Cell, defValue CellDefault) [][]string{
 					tempRow[titleIndex[key]] = def
 				}
 			}
+			indexStr := strconv.Itoa(i)
+			tempRow[titleIndex[defValue.Index]] = indexStr
+			resRows = append(resRows, tempRow)
 		}
 		
 
