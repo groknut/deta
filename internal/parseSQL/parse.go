@@ -60,7 +60,7 @@ func Parse(sqlquery string) Cell{
 		inColStr := parseStack(sqlquery)
 		inCol := splitCol(inColStr)
 		resultQuery = append(resultQuery, inCol)
-		valRe := regexp.MustCompile(`VALUES\s*\(([^)]+)\)`)
+		valRe := regexp.MustCompile(`\(([^)]+)\)`)
 		valRow := valRe.FindAllStringSubmatch(sqlquery,-1)
 		return Cell{Query: resultQuery, Flag: "i", InValue: valRow}
 	}
