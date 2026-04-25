@@ -1,1 +1,104 @@
 package parse_sql
+
+import (
+	"slices"
+	"strconv"
+	"strings"
+)
+
+// Struct for storing default value in column
+type CellDefault struct{
+	Title []string
+	DefaultVal map[string]string
+	Index string
+}
+
+// Public function for getting default value
+func ParseTableCell(sqlTable string) CellDefault{
+	var idKey string
+	titleColumn := make([]string,0)
+	defaultval := make(map[string]string)
+	clearColumn := splitColumnTable(sqlTable)
+	for _, q := range clearColumn{
+		partsQuery := strings.Split(q, " ") 
+		idxDEFAULT := slices.Index(partsQuery, "DEFAULT")
+		idxPrimary := slices.Index(partsQuery, "PRIMARY")
+		if idxDEFAULT != -1{
+			defaultval[partsQuery[0]] = partsQuery[idxDEFAULT+1]
+		} else{
+			titleColumn = append(titleColumn, partsQuery[0])
+		}
+		if idxPrimary != -1{
+			idKey = partsQuery[0]
+		}
+	}
+
+	return CellDefault{Title: titleColumn, DefaultVal: defaultval, Index: idKey}
+}
+
+// Private function to split column of query
+func splitColumnTable(query string) []string{
+	var result []string
+	var current strings.Builder
+	parentCnt := 0
+	for i := 0; i < len(query); i++{
+		ch := query[i]
+
+		switch ch {
+		case '(':
+			parentCnt++
+			current.WriteByte(ch)
+		case ')':
+			parentCnt--
+			current.WriteByte(ch)
+		case ',':
+			if parentCnt == 0{
+				result = append(result, strings.TrimSpace(current.String()))
+				current.Reset()
+			} else {
+				current.WriteByte(ch)
+			}
+		default:
+			current.WriteByte(ch)
+		}
+	}
+
+	if current.Len() > 0{
+		result = append(result, strings.TrimSpace(current.String()))
+	}
+	return result
+}
+
+
+// Public function prefer of data for model. Also it fills default value
+func AddRowsOfModel(insertInto Cell, defValue CellDefault) [][]string{
+	titleIndex := make(map[string]int)
+	for i, t := range defValue.Title{
+		titleIndex[t] = i
+	}
+	columnInsert := make([]string,0)
+	resRows := make([][]string, 0)
+	widthRow := len(defValue.Title)
+	for i, row := range insertInto.InValue{
+		if i == 0{
+			columnInsert = row
+		}else{
+			tempRow := make([]string, widthRow)
+			for j, c := range columnInsert{
+				tempRow[titleIndex[c]] = row[j]
+			}
+			for key, def := range defValue.DefaultVal{
+				if !slices.Contains(columnInsert, key){
+					tempRow[titleIndex[key]] = def
+				}
+			}
+			indexStr := strconv.Itoa(i)
+			tempRow[titleIndex[defValue.Index]] = indexStr
+			resRows = append(resRows, tempRow)
+		}
+		
+
+	}
+
+	return resRows
+}

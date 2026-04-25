@@ -1,40 +1,45 @@
 package readers
 
 import (
+    // in build package
+	"bufio"
+	"errors"
 	"fmt"
 	"os"
-	// "regexp"
-	// "strings"
+	"strings"
+    "regexp"
 
+    // github package
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/evertras/bubble-table/table"
 
-    "deta/utils"
+    // DIY package
+	parse "deta/internal/parseSQL"
+	"deta/utils"
 )
 
 type sqlLoaderMsg struct{
-	typeRows []string
 	titles []string
 	rows [][]string
+    name string
 }
 
 type sqlErrorMsg error
 
-// Структура для модели
+// Struct for SQL model
 type ModelReaderSQL struct {
+    Name string
 	Path string
 	Cursor int
 	Title *[]string
 	Rows *[][]string
-	TypeRows *[]string
 	Table table.Model
 	Style struct{
 		Title lipgloss.Style
 		Item lipgloss.Style
 		Cancel lipgloss.Style
 		FontType lipgloss.Style
-		FontIndex lipgloss.Style
 	}
 }
 
@@ -43,16 +48,17 @@ type SQLReader struct{
     model *ModelReaderSQL
 }
 
+// Constractor 
 func NewSQLReader() *SQLReader{
     return &SQLReader{
         model: &ModelReaderSQL{},
     }
 }
 
-//Запуск модели
+// Run model
 func(r *SQLReader) Run() error{
     p := tea.NewProgram(r.model)
-    if _,err := p.Run(); err != nil{
+    if _, err := p.Run(); err != nil{
         return err
     }
      
@@ -68,59 +74,104 @@ func readSQL(path string) tea.Cmd {
     return func() tea.Msg {
         if err := utils.CheckFile(path); err != nil{
             fmt.Println("File don't exists in directory")
-            return  sqlErrorMsg(err)
+            return sqlErrorMsg(err)
         }
+
         file, err := os.Open(path)
         if err != nil {
-            return csvErrorMsg(err)
+            return sqlErrorMsg(err) 
         }
         defer file.Close()
 
-        title := make([]string, 0)
-        rows := make([][]string, 0)
-		typeRows := make([]string,0)
+        re := regexp.MustCompile(`(--|#).*`)
+        var titleDefalt parse.CellDefault
+        var resultModel sqlLoaderMsg
+        var sqlBuilder strings.Builder
+
+        scanner := bufio.NewScanner(file)
+        for scanner.Scan() {
+            line := scanner.Text()
+            line = re.ReplaceAllString(line, "")
+            line = strings.TrimSpace(line)
+            if line == "" {
+                continue
+            }
+            
+            sqlBuilder.WriteString(line)
+            sqlBuilder.WriteString(" ")
+            
+            currentSQL := sqlBuilder.String()
+            if strings.Contains(currentSQL, ";") {
+                semicolonIdx := strings.Index(currentSQL, ";")
+                query := strings.TrimSpace(currentSQL[:semicolonIdx])
+                
+                temp := parse.Parse(query)
+                
+                switch temp.Flag {
+                case "t":
+                    resultModel.name = temp.Query[0]
+                    titleDefalt = parse.ParseTableCell(temp.Query[1])
+                    resultModel.titles = titleDefalt.Title
+                case "i":
+                    if resultModel.name == "" {
+                        return sqlErrorMsg(errors.New("Table don't exists"))
+                    }
+                    resultModel.rows = parse.AddRowsOfModel(temp, titleDefalt)
+                }
+                
+                sqlBuilder.Reset()
+                if semicolonIdx+1 < len(currentSQL) {
+                    remaining := strings.TrimSpace(currentSQL[semicolonIdx+1:])
+                    if remaining != "" {
+                        sqlBuilder.WriteString(remaining)
+                    }
+                }
+            }
+        }
+
+        if err := scanner.Err(); err != nil {
+            return sqlErrorMsg(err)
+        }
         
-
-		// TODO код для чтения SQL файлов		
-
-        return sqlLoaderMsg{titles: title, rows: rows, typeRows: typeRows}
+        if resultModel.name == "" {
+            return sqlErrorMsg(errors.New("No table found in SQL file"))
+        }
+        
+        return resultModel
     }
 }
 
+
+// Initilization model sql
 func(r *SQLReader) Init(path string) error{
     r.path = path
 	title := make([]string, 0)
 	rows := make([][]string, 0)
-	typeRows := make([]string, 0)
 	
 	r.model = &ModelReaderSQL{
 		Path:  path,
 		Title: &title,
 		Rows:  &rows,
-		TypeRows: &typeRows,
 	}
 	
 	r.model.Style.Item = lipgloss.NewStyle().Background(lipgloss.Color("#5CC0C2"))
 	r.model.Style.Title = lipgloss.NewStyle().Background(lipgloss.Color("#019395"))
 	r.model.Style.FontType = lipgloss.NewStyle().Foreground(lipgloss.Color("#6196A8"))
-	r.model.Style.FontIndex = lipgloss.NewStyle().Foreground(lipgloss.Color("#FEE16C"))
-
 
 	return nil
 }
 
-// Инициализируем нашу модель
+// Initialization model 
 func(m *ModelReaderSQL) Init() tea.Cmd{
 	return readSQL(m.Path)
 }
 
-// Обновление таблицы
+// Update table
 func (m *ModelReaderSQL) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
     switch msg := msg.(type) {
     case sqlLoaderMsg:
         m.Title = &msg.titles
         m.Rows = &msg.rows
-		m.TypeRows = &msg.typeRows
         width := len(*m.Title)
         columns := make([]table.Column, width)
         for i, titleStr := range *m.Title {
