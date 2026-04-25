@@ -1,9 +1,9 @@
 package parse_sql
 
 import (
+	// "fmt"
 	"regexp"
 	"slices"
-	"strings"
 )
 
 // Struct for query
@@ -40,11 +40,13 @@ func parseStack(query string) string{
 // Public function to parse string
 // This function returns flag and main data from query
 // Query for request "CREATE TABLE":
-// * first element it's a name table
-// * second element it's a data about table
+// * first element this a name table
+// * second element this a data about table
 // Query for request "INSERT INTO":
-// * first element it's a name table
-// * second element colums
+// * first element this a name table
+// InValue:
+// * first slice this a name column for inserting
+// * other slices this values for inserting
 func Parse(sqlquery string) Cell{
 	resultQuery := make([]string,0)
 	spaceSkip := regexp.MustCompile(` +`)
@@ -57,11 +59,9 @@ func Parse(sqlquery string) Cell{
 	}
 	if slices.Contains(mode, "INSERT") && slices.Contains(mode,"INTO"){
 		resultQuery = append(resultQuery, mode[2])
-		inColStr := parseStack(sqlquery)
-		inCol := splitCol(inColStr)
-		resultQuery = append(resultQuery, inCol)
 		valRe := regexp.MustCompile(`\(([^)]+)\)`)
-		valRow := valRe.FindAllStringSubmatch(sqlquery,-1)
+		valStr := valRe.FindAllString(sqlquery,-1)
+		valRow := splitInsertVal(valStr)
 		return Cell{Query: resultQuery, Flag: "i", InValue: valRow}
 	}
 
@@ -77,10 +77,13 @@ func splitCol(str string) string{
 // Private function for split insert data 
 func splitInsertVal(val []string) [][]string{
 	result := make([][]string,0)
+	reSplit := regexp.MustCompile(`'.*?'|".*?"|\S+`)
 	for _, v := range val{
 		unBracketVal := parseStack(v)
 		spaceSplitVal := splitCol(unBracketVal)
-		result = append(result, strings.Split(spaceSplitVal," "))
+		valStr := reSplit.FindAllString(spaceSplitVal,-1)
+		result = append(result, valStr)
+
 	}
 	return  result
 }

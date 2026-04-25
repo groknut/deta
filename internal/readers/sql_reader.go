@@ -85,8 +85,8 @@ func readSQL(path string) tea.Cmd {
 
         // regular expression for clearing comments
         re := regexp.MustCompile(`(--|#).*`)
-        title := make([]string, 0)
-        rows := make([][]string, 0)
+        // title := make([]string, 0)
+        // rows := make([][]string, 0)
         var titleDefalt parse.CellDefault
 
         scanner := bufio.NewScanner(file)
@@ -111,7 +111,8 @@ func readSQL(path string) tea.Cmd {
                         fmt.Println("Table don't exists")
                         return csvErrorMsg(errors.New("Table don't exists"))
                     }
-                    
+                    resultModel.rows = parse.AddRowsOfModel(temp,titleDefalt)
+                    sqlQuery = ""
                 }
             } else{
                 sqlQuery += line + " "

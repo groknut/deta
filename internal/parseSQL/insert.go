@@ -65,13 +65,30 @@ func splitColumnTable(query string) []string{
 
 // Public function prefer of data for model. Also it fills default value
 func AddRowsOfModel(insertInto Cell, defValue CellDefault) [][]string{
-// 	resRows := make([][]string, 0)
-// 	widthRow := len(defValue.Title)
-// 	for _, row := range insertInto.InValue{
-// 		tempRow := make([]string, widthRow)
+	titleIndex := make(map[string]int)
+	for i, t := range defValue.Title{
+		titleIndex[t] = i
+	}
+	columnInsert := make([]string,0)
+	resRows := make([][]string, 0)
+	widthRow := len(defValue.Title)
+	for i, row := range insertInto.InValue{
+		if i == 0{
+			columnInsert = row
+		}else{
+			tempRow := make([]string, widthRow)
+			for j, c := range columnInsert{
+				tempRow[titleIndex[c]] = row[j]
+			}
+			for key, def := range defValue.DefaultVal{
+				if !slices.Contains(columnInsert, key){
+					tempRow[titleIndex[key]] = def
+				}
+			}
+		}
+		
 
-// 	}
+	}
 
-// 	return resRows
-	return nil
+	return resRows
 }
