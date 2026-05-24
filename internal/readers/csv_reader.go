@@ -6,9 +6,8 @@ import (
 	"os"
 	"regexp"
 	"strings"
-    
+
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 	"github.com/evertras/bubble-table/table"
 
     "deta/utils"
@@ -28,11 +27,7 @@ type ModelReaderCSV struct {
 	Title *[]string
 	Rows *[][]string
 	Table table.Model
-	Style struct{
-		Title lipgloss.Style
-		Item lipgloss.Style
-		Cancel lipgloss.Style
-	}
+	Style utils.ReaderStyles
 }
 
 type CSVReader struct{
@@ -52,12 +47,12 @@ func(r *CSVReader) Run() error{
     if _,err := p.Run(); err != nil{
         return err
     }
-     
+
     return nil
 }
 
 
-// Отрисовка модели 
+// Отрисовка модели
 func (m *ModelReaderCSV) View() string{
 	return m.Table.View() + "\n↑/↓: navigate • q: quit"
 }
@@ -110,22 +105,21 @@ func(r *CSVReader) Init(path string) error{
     r.path = path
 	title := make([]string, 0)
 	rows := make([][]string, 0)
-	
+
 	r.model = &ModelReaderCSV{
 		Path:  path,
 		Title: &title,
 		Rows:  &rows,
 	}
-	
-	r.model.Style.Item = lipgloss.NewStyle().Background(lipgloss.Color("#C40361"))
-	r.model.Style.Title = lipgloss.NewStyle().Background(lipgloss.Color("#8C0286"))
-	
+
+	r.model.Style = utils.DefaultStyles()
+
 	return nil
 }
 
 // Инициализируем нашу модель
 func(m *ModelReaderCSV) Init() tea.Cmd{
-    
+
 	return readCSV(m.Path)
 }
 

@@ -11,7 +11,6 @@ import (
 
     // github package
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 	"github.com/evertras/bubble-table/table"
 
     // DIY package
@@ -35,12 +34,7 @@ type ModelReaderSQL struct {
 	Title *[]string
 	Rows *[][]string
 	Table table.Model
-	Style struct{
-		Title lipgloss.Style
-		Item lipgloss.Style
-		Cancel lipgloss.Style
-		FontType lipgloss.Style
-	}
+	Style utils.ReaderStyles
 }
 
 type SQLReader struct{
@@ -48,7 +42,7 @@ type SQLReader struct{
     model *ModelReaderSQL
 }
 
-// Constractor 
+// Constractor
 func NewSQLReader() *SQLReader{
     return &SQLReader{
         model: &ModelReaderSQL{},
@@ -61,11 +55,11 @@ func(r *SQLReader) Run() error{
     if _, err := p.Run(); err != nil{
         return err
     }
-     
+
     return nil
 }
 
-// Отрисовка модели 
+// Отрисовка модели
 func (m *ModelReaderSQL) View() string{
 	return m.Table.View() + "\n↑/↓: navigate • q: quit"
 }
@@ -79,7 +73,7 @@ func readSQL(path string) tea.Cmd {
 
         file, err := os.Open(path)
         if err != nil {
-            return sqlErrorMsg(err) 
+            return sqlErrorMsg(err)
         }
         defer file.Close()
 
@@ -96,17 +90,17 @@ func readSQL(path string) tea.Cmd {
             if line == "" {
                 continue
             }
-            
+
             sqlBuilder.WriteString(line)
             sqlBuilder.WriteString(" ")
-            
+
             currentSQL := sqlBuilder.String()
             if strings.Contains(currentSQL, ";") {
                 semicolonIdx := strings.Index(currentSQL, ";")
                 query := strings.TrimSpace(currentSQL[:semicolonIdx])
-                
+
                 temp := parse.Parse(query)
-                
+
                 switch temp.Flag {
                 case "t":
                     resultModel.name = temp.Query[0]
@@ -118,7 +112,7 @@ func readSQL(path string) tea.Cmd {
                     }
                     resultModel.rows = parse.AddRowsOfModel(temp, titleDefalt)
                 }
-                
+
                 sqlBuilder.Reset()
                 if semicolonIdx+1 < len(currentSQL) {
                     remaining := strings.TrimSpace(currentSQL[semicolonIdx+1:])
@@ -132,11 +126,11 @@ func readSQL(path string) tea.Cmd {
         if err := scanner.Err(); err != nil {
             return sqlErrorMsg(err)
         }
-        
+
         if resultModel.name == "" {
             return sqlErrorMsg(errors.New("No table found in SQL file"))
         }
-        
+
         return resultModel
     }
 }
@@ -147,21 +141,19 @@ func(r *SQLReader) Init(path string) error{
     r.path = path
 	title := make([]string, 0)
 	rows := make([][]string, 0)
-	
+
 	r.model = &ModelReaderSQL{
 		Path:  path,
 		Title: &title,
 		Rows:  &rows,
 	}
-	
-	r.model.Style.Item = lipgloss.NewStyle().Background(lipgloss.Color("#5CC0C2"))
-	r.model.Style.Title = lipgloss.NewStyle().Background(lipgloss.Color("#019395"))
-	r.model.Style.FontType = lipgloss.NewStyle().Foreground(lipgloss.Color("#6196A8"))
+
+	r.model.Style = utils.DefaultStyles()
 
 	return nil
 }
 
-// Initialization model 
+// Initialization model
 func(m *ModelReaderSQL) Init() tea.Cmd{
 	return readSQL(m.Path)
 }
@@ -230,4 +222,3 @@ func (m *ModelReaderSQL) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
     return m, nil
 }
-
