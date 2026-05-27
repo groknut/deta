@@ -12,7 +12,7 @@ import (
 
 func StartUtil() error{
 
-	if len(os.Args) < 2 || slices.Contains(HELP_ARGS, filename) {
+	if len(os.Args) < 2 || slices.Contains(HELP_ARGS, os.Args[1]) {
 		fmt.Print(HELP_MESSAGE)
 		return nil
 	}
