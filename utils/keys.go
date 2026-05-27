@@ -1,5 +1,7 @@
 package utils
 
+import tea "github.com/charmbracelet/bubbletea"
+
 type Action int
 
 const (
@@ -26,4 +28,11 @@ func DefaultKeyMap() KeyMap {
         "q":       ActionQuit,
         "ctrl+c":  ActionQuit,
     }
+}
+
+func (km KeyMap) Lookup(msg tea.KeyMsg) Action {
+    if action, ok := km[msg.String()]; ok {
+        return action
+    }
+    return ActionNone
 }
