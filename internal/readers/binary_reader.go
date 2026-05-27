@@ -40,7 +40,20 @@ func (m *ModelReaderBinary) updateViewport() {
 }
 
 func (m *ModelReaderBinary) loadVisibleRows() tea.Cmd {
-    return nil
+    return func() tea.Msg {
+        if m.file == nil || m.rowsPerPage == 0 {
+            return hexVisibleMsg{rows: nil}
+        }
+
+        buf := make([]byte, m.rowsPerPage*parse.BytesPerRow)
+        n, err := m.file.ReadAt(buf, m.offset)
+        if err != nil && err != io.EOF {
+            return binaryErrorMsg(err)
+        }
+
+        rows := BuildRows(m.offset, buf[:n], m.rowsPerPage)
+        return hexVisibleMsg{rows: rows}
+    }
 }
 
 func (m *ModelReaderBinary) Init() tea.Cmd {
