@@ -2,12 +2,13 @@ package readers
 
 import (
     "os"
-    "io"
+    // "io"
 
     tea "github.com/charmbracelet/bubbletea"
     "github.com/evertras/bubble-table/table"
 
     "deta/utils"
+    parse "deta/internal/parse"
 )
 
 type hexVisibleMsg struct {
@@ -27,10 +28,16 @@ type ModelReaderBinary struct {
 }
 
 func (m *ModelReaderBinary) totalRows() int64 {
-    return 0
+    return parse.TotalRows(m.fileSize)
 }
 
-func (m *ModelReaderBinary) updateViewport() {}
+func (m *ModelReaderBinary) updateViewport() {
+    m.offset, m.selectedRow = parse.CalcViewport(
+        m.cursorRow,
+        m.totalRows(),
+        int64(m.rowsPerPage),
+    )
+}
 
 func (m *ModelReaderBinary) loadVisibleRows() tea.Cmd {
     return nil

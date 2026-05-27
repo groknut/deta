@@ -37,17 +37,17 @@ func TestFormatHexAndASCII(t *testing.T) {
     // Частичный чанк (10 байт)
     partial := []byte{0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4A}
     hex2, ascii2 := parse.FormatHexAndASCII(partial)
-    // Ожидаем 10 байт данных и 6 пробелов в hex
-    expectedHex2 := "41 42 43 44 45 46 47 48 49 4A                         "
-    // Ожидаем "ABCDEFGHIJ" + 6 пробелов
+
+    expectedHex2 := "41 42 43 44 45 46 47 48 49 4A                  "
     expectedASCII2 := "ABCDEFGHIJ      "
+
     if hex2 != expectedHex2 || ascii2 != expectedASCII2 {
         t.Errorf("partial chunk: hex=%q ascii=%q", hex2, ascii2)
     }
 
     // Пустой чанк
     emptyHex, emptyASCII := parse.FormatHexAndASCII(nil)
-    expectedEmptyHex := "                                                 "
+    expectedEmptyHex := "                                               "
     expectedEmptyASCII := "                "
     if emptyHex != expectedEmptyHex || emptyASCII != expectedEmptyASCII {
         t.Errorf("empty chunk: hex=%q (len=%d) ascii=%q", emptyHex, len(emptyHex), emptyASCII)
