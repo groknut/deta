@@ -12,13 +12,12 @@ import (
 
 func StartUtil() error{
 
-	filename := os.Args[1]
-
 	if len(os.Args) < 2 || slices.Contains(HELP_ARGS, filename) {
 		fmt.Print(HELP_MESSAGE)
 		return nil
 	}
 
+	filename := os.Args[1]
     ext := filepath.Ext(filename)
     typeFile := strings.TrimPrefix(ext, ".")
 
