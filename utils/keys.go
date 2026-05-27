@@ -12,3 +12,18 @@ const (
     ActionEnd
     ActionQuit
 )
+
+type KeyMap map[string]Action
+
+func DefaultKeyMap() KeyMap {
+    return KeyMap{
+        "up":      ActionUp,
+        "down":    ActionDown,
+        "pgup":    ActionPageUp,
+        "pgdown":  ActionPageDown,
+        "home":    ActionHome,
+        "end":     ActionEnd,
+        "q":       ActionQuit,
+        "ctrl+c":  ActionQuit,
+    }
+}
