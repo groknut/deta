@@ -13,6 +13,8 @@ const (
     ActionHome
     ActionEnd
     ActionQuit
+    ActionLeft
+    ActionRight
 )
 
 type KeyMap map[string]Action
@@ -27,6 +29,8 @@ func DefaultKeyMap() KeyMap {
         "end":     ActionEnd,
         "q":       ActionQuit,
         "ctrl+c":  ActionQuit,
+        "left":    ActionLeft,
+        "right":   ActionRight,
     }
 }
 
