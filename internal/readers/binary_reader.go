@@ -84,14 +84,104 @@ func (m *ModelReaderBinary) loadVisibleRows() tea.Cmd {
 }
 
 func (m *ModelReaderBinary) Init() tea.Cmd {
-    return nil
+	return m.loadVisibleRows()
 }
 
 func (m *ModelReaderBinary) View() string {
-    return ""
+	return m.table.View() + "\n↑↓: row • PgUp/PgDn: page • Home/End • q: quit"
 }
 
 func (m *ModelReaderBinary) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+    switch msg := msg.(type) {
+
+    case hexVisibleMsg:
+        columns := []table.Column{
+            table.NewColumn("Offset", "Offset", 10),
+            table.NewColumn("Hex", "Hex", 3*parse.BytesPerRow+2),
+            table.NewColumn("ASCII", "ASCII", parse.BytesPerRow),
+        }
+
+        t := table.New(columns).
+            WithRows(msg.rows).
+            Focused(true).
+            WithPageSize(m.rowsPerPage + 1).
+            HeaderStyle(m.styles.Title).
+            HighlightStyle(m.styles.Item)
+
+        if len(msg.rows) > 0 {
+            if m.selectedRow >= len(msg.rows) {
+                m.selectedRow = len(msg.rows) - 1
+            }
+        } else {
+            m.selectedRow = 0
+        }
+        t = t.WithHighlightedRow(m.selectedRow)
+        m.table = t
+        return m, nil
+
+    case binaryErrorMsg:
+        if m.file != nil {
+            m.file.Close()
+        }
+        return m, tea.Quit
+
+    case tea.WindowSizeMsg:
+        m.table = m.table.WithMaxTotalWidth(msg.Width)
+        return m, nil
+
+    case tea.KeyMsg:
+        switch msg.String() {
+        case "q", "ctrl+c":
+            if m.file != nil {
+                m.file.Close()
+            }
+            return m, tea.Quit
+
+        case "up":
+            if m.cursorRow > 0 {
+                m.cursorRow--
+                m.updateViewport()
+                return m, m.loadVisibleRows()
+            }
+        case "down":
+            total := m.totalRows()
+            if total > 0 && m.cursorRow < total-1 {
+                m.cursorRow++
+                m.updateViewport()
+                return m, m.loadVisibleRows()
+            }
+        case "pgup":
+            m.cursorRow -= int64(m.rowsPerPage)
+            if m.cursorRow < 0 {
+                m.cursorRow = 0
+            }
+            m.updateViewport()
+            return m, m.loadVisibleRows()
+        case "pgdown":
+            total := m.totalRows()
+            m.cursorRow += int64(m.rowsPerPage)
+            if m.cursorRow >= total {
+                m.cursorRow = total - 1
+                if m.cursorRow < 0 {
+                    m.cursorRow = 0
+                }
+            }
+            m.updateViewport()
+            return m, m.loadVisibleRows()
+        case "home":
+            m.cursorRow = 0
+            m.updateViewport()
+            return m, m.loadVisibleRows()
+        case "end":
+            m.cursorRow = m.totalRows() - 1
+            if m.cursorRow < 0 {
+                m.cursorRow = 0
+            }
+            m.updateViewport()
+            return m, m.loadVisibleRows()
+        }
+    }
+
     return m, nil
 }
 
