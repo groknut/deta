@@ -25,6 +25,7 @@ type ModelReaderBinary struct {
     offset      int64
     table       table.Model
     styles      utils.ReaderStyles
+   	keyMap utils.KeyMap
 }
 
 func BuildRows(offset int64, data []byte, rowsPerPage int) []table.Row {
@@ -130,34 +131,35 @@ func (m *ModelReaderBinary) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
         return m, nil
 
     case tea.KeyMsg:
-        switch msg.String() {
-        case "q", "ctrl+c":
+    	action := m.keyMap.Lookup(msg)
+        switch action {
+        case utils.ActionQuit:
             if m.file != nil {
                 m.file.Close()
             }
             return m, tea.Quit
 
-        case "up":
+        case utils.ActionUp:
             if m.cursorRow > 0 {
                 m.cursorRow--
                 m.updateViewport()
                 return m, m.loadVisibleRows()
             }
-        case "down":
+        case utils.ActionDown:
             total := m.totalRows()
             if total > 0 && m.cursorRow < total-1 {
                 m.cursorRow++
                 m.updateViewport()
                 return m, m.loadVisibleRows()
             }
-        case "pgup":
+        case utils.ActionPageUp:
             m.cursorRow -= int64(m.rowsPerPage)
             if m.cursorRow < 0 {
                 m.cursorRow = 0
             }
             m.updateViewport()
             return m, m.loadVisibleRows()
-        case "pgdown":
+        case utils.ActionPageDown:
             total := m.totalRows()
             m.cursorRow += int64(m.rowsPerPage)
             if m.cursorRow >= total {
@@ -168,11 +170,11 @@ func (m *ModelReaderBinary) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
             }
             m.updateViewport()
             return m, m.loadVisibleRows()
-        case "home":
+        case utils.ActionHome:
             m.cursorRow = 0
             m.updateViewport()
             return m, m.loadVisibleRows()
-        case "end":
+        case utils.ActionEnd:
             m.cursorRow = m.totalRows() - 1
             if m.cursorRow < 0 {
                 m.cursorRow = 0
@@ -213,6 +215,8 @@ func (r *BinaryReader) Init(path string) error {
     r.model.rowsPerPage = 16
     r.model.cursorRow = 0
     r.model.styles = utils.DefaultStyles()
+   	r.model.keyMap = utils.DefaultKeyMap()
+
     return nil
 }
 
