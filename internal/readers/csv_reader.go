@@ -28,6 +28,7 @@ type ModelReaderCSV struct {
 	Rows *[][]string
 	Table table.Model
 	Style utils.ReaderStyles
+	keyMap utils.KeyMap
 }
 
 type CSVReader struct{
@@ -113,6 +114,7 @@ func(r *CSVReader) Init(path string) error{
 	}
 
 	r.model.Style = utils.DefaultStyles()
+	r.model.keyMap = utils.DefaultKeyMap()
 
 	return nil
 }
@@ -167,17 +169,18 @@ func (m *ModelReaderCSV) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
         return m, tea.Quit
 
     case tea.KeyMsg:
-        switch msg.String(){
-		case "ctrl+c", "q":
-			return m, tea.Quit
-		case "up", "down":
-			var cmd tea.Cmd
-			m.Table, cmd = m.Table.Update(msg)
-			return m, cmd
-        case "left", "right":
-            var cmd tea.Cmd
-			m.Table, cmd = m.Table.Update(msg)
-			return m, cmd
+        action := m.keyMap.Lookup(msg)
+        switch action {
+        	case utils.ActionQuit:
+        		return m, tea.Quit
+        	case utils.ActionUp, utils.ActionDown:
+        		var cmd tea.Cmd
+        		m.Table, cmd = m.Table.Update(msg)
+        		return m, cmd
+        	case utils.ActionLeft, utils.ActionRight:
+            	var cmd tea.Cmd
+        	m.Table, cmd = m.Table.Update(msg)
+        	return m, cmd
 		}
 
     case tea.WindowSizeMsg:
