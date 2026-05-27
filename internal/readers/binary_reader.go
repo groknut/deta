@@ -2,7 +2,7 @@ package readers
 
 import (
     "os"
-    // "io"
+    "io"
 
     tea "github.com/charmbracelet/bubbletea"
     "github.com/evertras/bubble-table/table"
@@ -25,6 +25,33 @@ type ModelReaderBinary struct {
     offset      int64
     table       table.Model
     styles      utils.ReaderStyles
+}
+
+func BuildRows(offset int64, data []byte, rowsPerPage int) []table.Row {
+    rows := make([]table.Row, rowsPerPage)
+    for i := 0; i < rowsPerPage; i++ {
+        start := i * parse.BytesPerRow
+        end := start + parse.BytesPerRow
+        var chunk []byte
+        if start < len(data) {
+            if end > len(data) {
+                chunk = data[start:len(data)]
+            } else {
+                chunk = data[start:end]
+            }
+        } else {
+            chunk = nil
+        }
+
+        rowOffset := offset + int64(start)
+        hexStr, asciiStr := parse.FormatHexAndASCII(chunk)
+        rows[i] = table.NewRow(table.RowData{
+            "Offset": parse.FormatOffset(rowOffset),
+            "Hex":    hexStr,
+            "ASCII":  asciiStr,
+        })
+    }
+    return rows
 }
 
 func (m *ModelReaderBinary) totalRows() int64 {
