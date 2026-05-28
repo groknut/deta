@@ -160,6 +160,7 @@ func (r *JSONReader) Init(path string) error {
     r.model.root = root
     r.model.styles = utils.DefaultStyles()
     r.model.keyMap = utils.DefaultKeyMap()
+    r.model.rebuildFlat()
     return nil
 }
 
