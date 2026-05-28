@@ -33,5 +33,9 @@ func read(path string) string{
 }
 
 func TestSQLRead(t *testing.T){
-	fmt.Println(read("./test_file/file.sql"))
+	if read("./test_file/file.sql") != ""{
+		fmt.Println("TestSQLRead PASSED")
+		return
+	}
+	fmt.Println("TestSQLRead didn't PASSED")
 }

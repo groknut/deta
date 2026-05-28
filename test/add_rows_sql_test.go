@@ -75,25 +75,22 @@ func readFileAddRows(path string){
 			}
 		}
 	}
-	fmt.Println("Name table",resultModel.name)
-	fmt.Println("Rows",resultModel.rows)
-	fmt.Printf("Titles %v\n\n",resultModel.titles,)
 
 	if err := scanner.Err(); err != nil {
+		fmt.Println("readFileAddRows didn't PASSED")
 		return
 	}
 
 	if resultModel.name == "" {
+		fmt.Println("readFileAddRows didn't PASSED")
 		return
 	}
-	for _, r := range resultModel.rows{
-		fmt.Println(r)
-	}
+	
+	fmt.Println("readFileAddRows PASSED")
 }
 
 
 
 func TestAddSqlRows(t *testing.T){
-	// testCell := parse.Cell{}
 	readFileAddRows("./test_file/file.sql")
 }

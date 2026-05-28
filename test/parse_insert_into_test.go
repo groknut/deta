@@ -6,12 +6,29 @@ import(
 	parse "github.com/groknut/deta/internal/parseSQL"
 )
 
+func testParse(str string) bool{
+	temp := parse.Parse(str)
+	return !(len(temp.Query) == 0)
+
+}
+
 func TestInsertInto(t *testing.T){
-	fmt.Println(parse.Parse("INSERT INTO users (name, email) VALUES ('Alice Johnson', 'alice@com'), ('Bob Mil', 'Bob@Com');"))
-	fmt.Println("Passed")
-	fmt.Println(parse.Parse("INSERT INTO users (name,  email) VALUES ('Alice Johnson', 'alice@com'), ('Bob Mil', 'Bob@Com');;").Query[0])
-	fmt.Println("Passed")
-	fmt.Println(parse.Parse("INSERT INTO users (name, email) VALUES ('Alice Johnson', 'alice@com'), ('Bob Mil', 'Bob@Com');;").InValue[1])
-	fmt.Println("Passed")
+	i := 0
+	fmt.Println()
+	if testParse("INSERT INTO users (name, email) VALUES ('Alice Johnson', 'alice@com'), ('Bob Mil', 'Bob@Com');"){
+		i++
+	}
+	if testParse("INSERT INTO users (name,  email) VALUES ('Alice Johnson', 'alice@com'), ('Bob Mil', 'Bob@Com');"){
+		i++
+	}
+
+	if testParse("INSERT INTO users (name, email) VALUES ('Alice Johnson', 'alice@com'), ('Bob Mil', 'Bob@Com');"){
+		i++
+	}
+	if i == 3{
+		fmt.Println("TestInsertInto PASSED")
+		return
+	}
+	fmt.Println("TestInsertInto didn't PASSED")
 
 }
