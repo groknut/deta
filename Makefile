@@ -1,13 +1,25 @@
-.PHONY: test
+
+.DEFAULT_GOAL := help
+
+help:
+	@echo "deta - data viewer"
+	@echo "  run: start program with golang"
+	@echo "  test: test program with TEST_FILE"
+	@echo "  b-linux: build for linux"
+	@echo "  b-windows: build for windows"
+	@echo "  b-mac-int: build for mac with intel"
+	@echo "  b-mac: build for arm64 mac"
+
+
+
+TEST_FILE ?= test/test_file/file.json
+
 run:
 	go run ./cmd/main.go
-sql: 
-	go run ./cmd/main.go ./test/test_file/file.sql
-csv:
-	go run ./cmd/main.go ./test/test_file/file.csv
 
-json: 
-	go run ./cmd/main.go ./test/test_file/file.json
+test:
+	go run ./cmd/main.go $(TEST_FILE)
+
 b-linux:
 	GOOS=linux GOARCH=amd64 go build -o deta ./cmd/main.go
 
