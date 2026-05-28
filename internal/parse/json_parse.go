@@ -3,6 +3,7 @@ package parse
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 )
 
 type JSONNode struct {
@@ -58,4 +59,22 @@ func FlattenTree(root *JSONNode) []*JSONNode {
     }
     walk(root)
     return list
+}
+
+// FormatJSONNode возвращает строковое представление узла для отображения.
+func FormatJSONNode(node *JSONNode) string {
+    indent := strings.Repeat("  ", node.Depth)
+    marker := "  "
+    if len(node.Children) > 0 {
+        if node.Expanded {
+            marker = "▼ "
+        } else {
+            marker = "▶ "
+        }
+    }
+    keyPart := indent + marker + node.Key
+    if node.Value != nil {
+        return keyPart + fmt.Sprintf(": %v", node.Value)
+    }
+    return keyPart
 }
