@@ -24,6 +24,17 @@ test:
 test-all:
 	go test -v ./test/
 
+OS_NAME ?= linux
+ARCH ?= amd64
+IMAGE_NAME ?= deta-build
+
+build-image:
+	docker build -t $(IMAGE_NAME) .
+
+docker-build: build-image
+	mkdir -p dist
+	docker run --rm -v "$$(pwd):/app" -v "$$(pwd):/dist" $(IMAGE_NAME) env GOOS=$(OS_NAME) GOARCH=$(ARCH)
+
 b-linux:
 	GOOS=linux GOARCH=amd64 go build -o deta ./main.go
 
