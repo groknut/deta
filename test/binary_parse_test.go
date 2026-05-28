@@ -3,6 +3,7 @@ package test
 import (
 	parse "github.com/groknut/deta/internal/parse"
     "testing"
+    "fmt"
 )
 
 func TestFormatOffset(t *testing.T) {
@@ -19,8 +20,10 @@ func TestFormatOffset(t *testing.T) {
         got := parse.FormatOffset(tt.offset)
         if got != tt.expected {
             t.Errorf("FormatOffset(%d) = %s, want %s", tt.offset, got, tt.expected)
+            return
         }
     }
+    fmt.Println("TestFormatOffset PASSED")
 }
 
 func TestFormatHexAndASCII(t *testing.T) {
@@ -32,7 +35,9 @@ func TestFormatHexAndASCII(t *testing.T) {
     expectedASCII := "................" // все непечатные
     if hex != expectedHex || ascii != expectedASCII {
         t.Errorf("full chunk: hex=%q ascii=%q", hex, ascii)
+        return
     }
+    fmt.Println("FullChank PASSED")
 
     // Частичный чанк (10 байт)
     partial := []byte{0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4A}
@@ -43,7 +48,9 @@ func TestFormatHexAndASCII(t *testing.T) {
 
     if hex2 != expectedHex2 || ascii2 != expectedASCII2 {
         t.Errorf("partial chunk: hex=%q ascii=%q", hex2, ascii2)
+        return
     }
+    fmt.Println("PartialChank PASSED")
 
     // Пустой чанк
     emptyHex, emptyASCII := parse.FormatHexAndASCII(nil)
@@ -51,5 +58,7 @@ func TestFormatHexAndASCII(t *testing.T) {
     expectedEmptyASCII := "                "
     if emptyHex != expectedEmptyHex || emptyASCII != expectedEmptyASCII {
         t.Errorf("empty chunk: hex=%q (len=%d) ascii=%q", emptyHex, len(emptyHex), emptyASCII)
+        return
     }
+    fmt.Println("EmptyChank PASSED")
 }
