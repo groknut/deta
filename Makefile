@@ -16,16 +16,16 @@ help:
 TEST_FILE ?= test/test_file/file.json
 
 run:
-	go run ./deta/main.go
+	go run ./main.go
 
 test:
-	go run ./deta/main.go $(TEST_FILE)
+	go run ./main.go $(TEST_FILE)
 
 b-linux:
-	GOOS=linux GOARCH=amd64 go build -o deta ./deta/main.go
+	GOOS=linux GOARCH=amd64 go build -o deta ./main.go
 
 b-windows:
-	GOOS=windows GOARCH=amd64 go build -o deta.exe ./deta/main.go
+	GOOS=windows GOARCH=amd64 go build -o deta.exe ./main.go
 
 b-mac-int:
 	GOOS=darwin GOARCH=amd64 go build -o deta
