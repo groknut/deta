@@ -23,3 +23,23 @@ func ParseJSON(data []byte) (*JSONNode, error) {
     BuildTree(root, raw, 0)
     return root, nil
 }
+
+// BuildTree рекурсивно заполняет узел детьми и значениями.
+func BuildTree(node *JSONNode, val any, depth int) {
+    switch v := val.(type) {
+    case map[string]any:
+        for k, elem := range v {
+            child := &JSONNode{Key: k, Depth: depth + 1, Expanded: false}
+            BuildTree(child, elem, depth+1)
+            node.Children = append(node.Children, child)
+        }
+    case []any:
+        for i, elem := range v {
+            child := &JSONNode{Key: fmt.Sprintf("[%d]", i), Depth: depth + 1, Expanded: false}
+            BuildTree(child, elem, depth+1)
+            node.Children = append(node.Children, child)
+        }
+    default:
+        node.Value = v
+    }
+}
