@@ -21,6 +21,9 @@ run:
 test:
 	go run ./main.go $(TEST_FILE)
 
+test-all:
+	go test -v ./test/
+
 b-linux:
 	GOOS=linux GOARCH=amd64 go build -o deta ./main.go
 
