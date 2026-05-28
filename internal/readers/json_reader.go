@@ -62,8 +62,16 @@ func (m *ModelReaderJSON) Init() tea.Cmd {
 }
 
 func (m *ModelReaderJSON) View() string {
-    // пока заглушка
-    return ""
+    var sb strings.Builder
+    for i, line := range m.flatLines {
+        if i == m.cursor {
+            sb.WriteString(m.styles.Item.Render(line))
+        } else {
+            sb.WriteString(line)
+        }
+        sb.WriteString("\n")
+    }
+    return sb.String() + "\n↑↓: move • ←→/hl: collapse/expand • q: quit"
 }
 
 func (m *ModelReaderJSON) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
