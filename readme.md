@@ -23,3 +23,12 @@ deta -h
 |binary|Реализовано|Таблица|
 |toml|В планах|-|
 |yaml|В планах|-|
+
+## Установка
+Утилиту возможно установить из [Releases](https://github.com/groknut/deta/releases).
+
+### Сборка из исходников:
+Выполните:
+```bash
+make b-{os.name}
+```
