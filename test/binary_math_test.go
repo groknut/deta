@@ -3,6 +3,7 @@ package test
 import (
     "testing"
     parse "github.com/groknut/deta/internal/parse"
+    "fmt"
 )
 
 func TestTotalRows(t *testing.T) {
@@ -22,8 +23,10 @@ func TestTotalRows(t *testing.T) {
         got := parse.TotalRows(tt.size)
         if got != tt.expected {
             t.Errorf("size %d: got %d, want %d", tt.size, got, tt.expected)
+            return
         }
     }
+    fmt.Println("TestTotalRows PASSED")
 }
 
 func TestCalcViewport(t *testing.T) {
@@ -47,6 +50,8 @@ func TestCalcViewport(t *testing.T) {
         if offset != tt.expectedOffset || sel != tt.expectedSel {
             t.Errorf("cursor=%d: offset=%d sel=%d, want offset=%d sel=%d",
                 tt.cursor, offset, sel, tt.expectedOffset, tt.expectedSel)
+            return
         }
     }
+    fmt.Println("TestCalcViewport PASSED")
 }
