@@ -1,0 +1,179 @@
+<mxfile host="65bd71144e">
+    <diagram id="oPDe31A0YIP4G4QSWuSQ" name="Страница — 1">
+        <mxGraphModel dx="710" dy="1325" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="&lt;span style=&quot;font-size: 16px;&quot;&gt;JSON&lt;/span&gt;&lt;span style=&quot;color: rgb(63, 63, 63); font-size: 16px; background-color: transparent;&quot;&gt;Reader&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+                    <mxGeometry x="20" y="40" width="110" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="" style="endArrow=none;dashed=1;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;strokeWidth=4;" edge="1" parent="1" target="2">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="70" y="530" as="sourcePoint"/>
+                        <mxPoint x="440" y="380" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="4" value="&lt;pre&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt; parse.ParseJSON()&lt;/font&gt;&lt;/pre&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+                    <mxGeometry x="580" y="40" width="180" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="" style="endArrow=none;dashed=1;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;strokeWidth=4;" edge="1" parent="1" target="4">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="670" y="530" as="sourcePoint"/>
+                        <mxPoint x="1040" y="380" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="6" value="&lt;span style=&quot;font-size: 16px;&quot;&gt;os.ReadFile()&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+                    <mxGeometry x="420" y="40" width="110" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" value="" style="endArrow=none;dashed=1;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;strokeWidth=4;" edge="1" parent="1" target="6">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="470" y="530" as="sourcePoint"/>
+                        <mxPoint x="840" y="380" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="8" value="&lt;span style=&quot;font-size: 16px;&quot;&gt;Init()&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+                    <mxGeometry x="230" y="40" width="110" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="9" value="" style="endArrow=none;dashed=1;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;strokeWidth=4;" edge="1" parent="1" target="8">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="280" y="540" as="sourcePoint"/>
+                        <mxPoint x="650" y="390" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="13" value="&lt;pre&gt;BuildTree()&lt;/pre&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+                    <mxGeometry x="820" y="40" width="110" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" value="" style="endArrow=none;dashed=1;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;strokeWidth=4;" edge="1" parent="1" target="13">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="870" y="530" as="sourcePoint"/>
+                        <mxPoint x="1240" y="380" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="15" value="&lt;pre&gt;rebuildFlat()&lt;/pre&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+                    <mxGeometry x="980" y="40" width="110" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="16" value="" style="endArrow=none;dashed=1;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;strokeWidth=4;" edge="1" parent="1" target="15">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="1030" y="530" as="sourcePoint"/>
+                        <mxPoint x="1400" y="380" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="17" value="&lt;pre&gt;FlattenTree()&lt;/pre&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+                    <mxGeometry x="1150" y="40" width="110" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="18" value="" style="endArrow=none;dashed=1;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;strokeWidth=4;" edge="1" parent="1" target="17">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="1200" y="530" as="sourcePoint"/>
+                        <mxPoint x="1570" y="380" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="19" value="&lt;pre&gt;FormatJSONNode()&lt;/pre&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+                    <mxGeometry x="1300" y="40" width="130" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="20" value="" style="endArrow=none;dashed=1;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;strokeWidth=4;" edge="1" parent="1" target="19">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="1360" y="530" as="sourcePoint"/>
+                        <mxPoint x="1720" y="380" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="21" value="&lt;pre&gt;Run()&lt;/pre&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+                    <mxGeometry x="1470" y="40" width="110" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="22" value="" style="endArrow=none;dashed=1;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;strokeWidth=4;" edge="1" parent="1" target="21">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="1520" y="530" as="sourcePoint"/>
+                        <mxPoint x="1890" y="380" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="23" value="&lt;pre&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;tea.NewProgram()&lt;/font&gt;&lt;/pre&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+                    <mxGeometry x="1630" y="40" width="150" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="24" value="" style="endArrow=none;dashed=1;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;strokeWidth=4;" edge="1" parent="1" target="23">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="1705" y="540" as="sourcePoint"/>
+                        <mxPoint x="2050" y="380" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="26" value="&lt;pre&gt;&lt;span style=&quot;font-size: 14px;&quot;&gt;View()&lt;/span&gt;&lt;/pre&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+                    <mxGeometry x="1860" y="40" width="150" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="27" value="" style="endArrow=none;dashed=1;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;strokeWidth=4;" edge="1" parent="1" target="26">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="1935" y="540" as="sourcePoint"/>
+                        <mxPoint x="2280" y="380" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="28" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;Initializing the reader&lt;/font&gt;" style="endArrow=classic;html=1;" edge="1" parent="1">
+                    <mxGeometry y="20" width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="80" y="160" as="sourcePoint"/>
+                        <mxPoint x="280" y="160" as="targetPoint"/>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="29" value="&lt;font style=&quot;font-size: 26px;&quot;&gt;File&lt;/font&gt;" style="endArrow=classic;html=1;" edge="1" parent="1">
+                    <mxGeometry y="20" width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="290" y="170" as="sourcePoint"/>
+                        <mxPoint x="470" y="170" as="targetPoint"/>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="30" value="&lt;font style=&quot;font-size: 13px;&quot;&gt;Reading a JSON file entirely&lt;/font&gt;" style="endArrow=classic;html=1;" edge="1" parent="1">
+                    <mxGeometry x="0.0526" y="20" width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="470" y="190" as="sourcePoint"/>
+                        <mxPoint x="660" y="190" as="targetPoint"/>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="31" value="&lt;font style=&quot;font-size: 19px;&quot;&gt;Parsing JSON data&lt;/font&gt;" style="endArrow=classic;html=1;" edge="1" parent="1">
+                    <mxGeometry y="30" width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="670" y="210" as="sourcePoint"/>
+                        <mxPoint x="870" y="210" as="targetPoint"/>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="32" value="&lt;font style=&quot;font-size: 17px;&quot;&gt;Recursive&lt;br&gt;&amp;nbsp;construction&lt;br&gt;&amp;nbsp;of a tree of nodes&lt;/font&gt;" style="endArrow=classic;html=1;" edge="1" parent="1">
+                    <mxGeometry y="30" width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="870" y="230" as="sourcePoint"/>
+                        <mxPoint x="1030" y="230" as="targetPoint"/>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="33" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;Building a flat&lt;br&gt;&amp;nbsp;list for display&lt;/font&gt;" style="endArrow=classic;html=1;" edge="1" parent="1">
+                    <mxGeometry x="0.0588" y="30" width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="1030" y="260" as="sourcePoint"/>
+                        <mxPoint x="1200" y="260" as="targetPoint"/>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="34" value="&lt;font style=&quot;font-size: 17px;&quot;&gt;Tree traversal &lt;br&gt;using Expanded &lt;br&gt;flags&lt;/font&gt;" style="endArrow=classic;html=1;" edge="1" parent="1">
+                    <mxGeometry y="40" width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="1200" y="290" as="sourcePoint"/>
+                        <mxPoint x="1360" y="290" as="targetPoint"/>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="35" value="&lt;font style=&quot;font-size: 19px;&quot;&gt;Formatting a node&lt;/font&gt;" style="endArrow=classic;html=1;" edge="1" parent="1">
+                    <mxGeometry y="30" width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="1360" y="320" as="sourcePoint"/>
+                        <mxPoint x="1520" y="320" as="targetPoint"/>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="36" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;Launching TUI&lt;/font&gt;" style="endArrow=classic;html=1;" edge="1" parent="1">
+                    <mxGeometry x="0.0588" y="20" width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="1530" y="340" as="sourcePoint"/>
+                        <mxPoint x="1700" y="340" as="targetPoint"/>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="37" value="&lt;font style=&quot;font-size: 21px;&quot;&gt;Creation of the&lt;br&gt;&amp;nbsp;Bubble Tea program&lt;/font&gt;" style="endArrow=classic;html=1;" edge="1" parent="1">
+                    <mxGeometry y="40" width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="1710" y="300" as="sourcePoint"/>
+                        <mxPoint x="1930" y="300" as="targetPoint"/>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
