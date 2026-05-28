@@ -10,7 +10,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/evertras/bubble-table/table"
 
-    "deta/utils"
+    "github.com/groknut/deta/utils"
 )
 
 type csvLoadedMsg struct {

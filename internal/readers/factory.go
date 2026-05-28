@@ -1,6 +1,6 @@
 package readers
 
-import "deta/pkg/interfaces"
+import "github.com/groknut/deta/pkg/interfaces"
 
 // Словарь для вызова структур
 var FactoryTypeFile = map[string] func() interfaces.Reader{

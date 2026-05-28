@@ -2,7 +2,7 @@ package test
 
 import (
     "testing"
-    parse "deta/internal/parse"
+    parse "github.com/groknut/deta/internal/parse"
 )
 
 func TestTotalRows(t *testing.T) {

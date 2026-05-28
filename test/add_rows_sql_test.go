@@ -11,7 +11,7 @@ import (
 	"bufio"
 	"fmt"
 	"strings"
-	parse "deta/internal/parseSQL"
+	parse "github.com/groknut/deta/internal/parseSQL"
 
 )
 
@@ -26,7 +26,7 @@ type sqlErrorMsg error
 func readFileAddRows(path string){
 	file, err := os.Open(path)
 	if err != nil {
-		return  
+		return
 	}
 	defer file.Close()
 
@@ -43,17 +43,17 @@ func readFileAddRows(path string){
 		if line == "" {
 			continue
 		}
-		
+
 		sqlBuilder.WriteString(line)
 		sqlBuilder.WriteString(" ")
-		
+
 		currentSQL := sqlBuilder.String()
 		if strings.Contains(currentSQL, ";") {
 			semicolonIdx := strings.Index(currentSQL, ";")
 			query := strings.TrimSpace(currentSQL[:semicolonIdx])
-			
+
 			temp := parse.Parse(query)
-			
+
 			switch temp.Flag {
 			case "t":
 				resultModel.name = temp.Query[0]
@@ -65,7 +65,7 @@ func readFileAddRows(path string){
 				}
 				resultModel.rows = parse.AddRowsOfModel(temp, titleDefalt)
 			}
-			
+
 			sqlBuilder.Reset()
 			if semicolonIdx+1 < len(currentSQL) {
 				remaining := strings.TrimSpace(currentSQL[semicolonIdx+1:])
@@ -78,19 +78,19 @@ func readFileAddRows(path string){
 	fmt.Println("Name table",resultModel.name)
 	fmt.Println("Rows",resultModel.rows)
 	fmt.Printf("Titles %v\n\n",resultModel.titles,)
-	
+
 	if err := scanner.Err(); err != nil {
-		return 
+		return
 	}
-	
+
 	if resultModel.name == "" {
-		return 
+		return
 	}
 	for _, r := range resultModel.rows{
-		fmt.Println(r)	
+		fmt.Println(r)
 	}
 }
-	
+
 
 
 func TestAddSqlRows(t *testing.T){

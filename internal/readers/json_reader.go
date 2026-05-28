@@ -6,8 +6,8 @@ import (
 
     tea "github.com/charmbracelet/bubbletea"
 
-    "deta/utils"
-    "deta/internal/parse"
+    "github.com/groknut/deta/utils"
+    "github.com/groknut/deta/internal/parse"
 )
 
 type jsonTreeMsg struct {

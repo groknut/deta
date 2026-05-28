@@ -3,7 +3,7 @@ package test
 import(
 	"testing"
 	"fmt"
-	parse "deta/internal/parseSQL"
+	parse "github.com/groknut/deta/internal/parseSQL"
 )
 
 func TestInsertInto(t *testing.T){

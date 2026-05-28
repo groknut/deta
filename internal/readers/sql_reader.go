@@ -14,8 +14,8 @@ import (
 	"github.com/evertras/bubble-table/table"
 
     // DIY package
-	parse "deta/internal/parseSQL"
-	"deta/utils"
+	parse "github.com/groknut/deta/internal/parseSQL"
+	"github.com/groknut/deta/utils"
 )
 
 type sqlLoaderMsg struct{

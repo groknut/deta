@@ -7,8 +7,8 @@ import (
     tea "github.com/charmbracelet/bubbletea"
     "github.com/evertras/bubble-table/table"
 
-    "deta/utils"
-    parse "deta/internal/parse"
+    "github.com/groknut/deta/utils"
+    parse "github.com/groknut/deta/internal/parse"
 )
 
 type hexVisibleMsg struct {

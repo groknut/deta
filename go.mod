@@ -1,4 +1,4 @@
-module deta
+module github.com/groknut/deta
 
 go 1.25.0
 

@@ -1,7 +1,7 @@
 package util
 
 import (
-	"deta/internal/readers"
+	"github.com/groknut/deta/internal/readers"
 	"errors"
 	"fmt"
 	"os"

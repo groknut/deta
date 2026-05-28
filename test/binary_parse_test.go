@@ -1,7 +1,7 @@
 package test
 
 import (
-	parse "deta/internal/parse"
+	parse "github.com/groknut/deta/internal/parse"
     "testing"
 )
 

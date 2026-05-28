@@ -1,7 +1,7 @@
 package main
 
 import (
-	deta "deta/pkg/util"
+	deta "github.com/groknut/deta/pkg/util"
 	"fmt"
 	"os"
 )
