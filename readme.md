@@ -25,10 +25,13 @@ deta -h
 |yaml|В планах|-|
 
 ## Установка
-Утилиту возможно установить из [Releases](https://github.com/groknut/deta/releases).
-
-### Сборка из исходников:
-Выполните:
+Утилиту возможно установить несколькими способами:
+1. из [Releases](https://github.com/groknut/deta/releases).
+2. используя инструменты go
+```bash
+go install github.com/groknut/deta@latest
+```
+3. Собрать из исходников
 ```bash
 make b-{os.name}
 ```
