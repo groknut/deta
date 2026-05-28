@@ -29,6 +29,25 @@ type ModelReaderJSON struct {
     keyMap utils.KeyMap
 }
 
+func (m *ModelReaderJSON) rebuildFlat() {
+    m.flatNodes = parse.FlattenTree(m.root)
+    m.flatLines = make([]string, len(m.flatNodes))
+    for i, node := range m.flatNodes {
+        m.flatLines[i] = parse.FormatJSONNode(node)
+    }
+    // коррекция курсора
+    if len(m.flatNodes) == 0 {
+        m.cursor = 0
+        return
+    }
+    if m.cursor >= len(m.flatNodes) {
+        m.cursor = len(m.flatNodes) - 1
+    }
+    if m.cursor < 0 {
+        m.cursor = 0
+    }
+}
+
 func (m *ModelReaderJSON) loadTree() tea.Cmd {
     return func() tea.Msg {
         return jsonTreeMsg{
