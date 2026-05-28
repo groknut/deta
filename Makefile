@@ -1,5 +1,6 @@
 
 .DEFAULT_GOAL := help
+.PHONY: test
 
 help:
 	@echo "deta - data viewer"
