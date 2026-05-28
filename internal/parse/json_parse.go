@@ -43,3 +43,19 @@ func BuildTree(node *JSONNode, val any, depth int) {
         node.Value = v
     }
 }
+
+// FlattenTree возвращает линейный список видимых узлов (с учётом Expanded).
+func FlattenTree(root *JSONNode) []*JSONNode {
+    var list []*JSONNode
+    var walk func(n *JSONNode)
+    walk = func(n *JSONNode) {
+        list = append(list, n)
+        if n.Expanded {
+            for _, child := range n.Children {
+                walk(child)
+            }
+        }
+    }
+    walk(root)
+    return list
+}
