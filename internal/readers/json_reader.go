@@ -2,6 +2,7 @@ package readers
 
 import (
     "os"
+    "strings"
 
     tea "github.com/charmbracelet/bubbletea"
 
@@ -75,7 +76,62 @@ func (m *ModelReaderJSON) View() string {
 }
 
 func (m *ModelReaderJSON) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-    // будет добавлено позже
+    switch msg := msg.(type) {
+
+    case jsonTreeMsg:
+        m.flatLines = msg.lines
+        m.flatNodes = msg.nodes
+        return m, nil
+
+    case jsonErrorMsg:
+        if m.file != nil {
+            m.file.Close()
+        }
+        return m, tea.Quit
+
+    case tea.WindowSizeMsg:
+        return m, nil
+
+    case tea.KeyMsg:
+
+    	action := m.keyMap.Lookup(msg)
+        switch action {
+	        case utils.ActionQuit:
+	            if m.file != nil {
+	                m.file.Close()
+	            }
+	            return m, tea.Quit
+	        case utils.ActionUp:
+	            if m.cursor > 0 {
+	                m.cursor--
+	                return m, nil
+	            }
+	        case utils.ActionDown:
+	            if m.cursor < len(m.flatNodes)-1 {
+	                m.cursor++
+	                return m, nil
+	            }
+        }
+
+        // дополнительные клавиши для дерева (раскрытие/сворачивание)
+        if m.cursor < len(m.flatNodes) {
+            node := m.flatNodes[m.cursor]
+            switch action {
+	            case utils.ActionRight:
+	                if len(node.Children) > 0 && !node.Expanded {
+	                    node.Expanded = true
+	                    m.rebuildFlat()
+	                    return m, m.loadTree()
+	                }
+	            case utils.ActionLeft:
+	                if len(node.Children) > 0 && node.Expanded {
+	                    node.Expanded = false
+	                    m.rebuildFlat()
+	                    return m, m.loadTree()
+	                }
+	            }
+        }
+    }
     return m, nil
 }
 
