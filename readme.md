@@ -6,6 +6,8 @@
 ![Go](https://img.shields.io/badge/Go-00ADD8.svg?style=for-the-badge) 
 [BubbleTea](https://github.com/charmbracelet/bubbletea)
 
+![demo](./assets/demo.gif)
+
 ## Сценарии вызова
 **Справка:**
 Вызов без аргументов, или с `--help`/`-h`
