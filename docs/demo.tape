@@ -1,7 +1,8 @@
 # Настройки вывода
 
 Output assets/demo.gif
-Set FontSize 16
+Set WindowBar Colorful
+Set FontSize 20
 Set Width 1200
 Set Height 600
 
