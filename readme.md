@@ -37,3 +37,8 @@ go install github.com/groknut/deta@latest
 ```bash
 make b-{os.name}
 ```
+4. Используя сборочный Docker-контейнер
+```bash
+docker build -t deta-build .
+docker run --rm -v "$(pwd):/app" -v "$(pwd):/dist" deta-build env GOOS=$(OS_NAME) GOARCH=$(ARCH)
+```
