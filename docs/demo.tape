@@ -3,6 +3,7 @@
 Output assets/demo.gif
 Set WindowBar Colorful
 Set FontSize 20
+Set Padding 0
 Set Width 1200
 Set Height 600
 
