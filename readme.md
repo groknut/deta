@@ -1,3 +1,44 @@
 
-## Data-Viewer
-TUI просмотрщик для json/csv данных
+# Deta
+
+Универсальный пейджер для чтения данных различных форматов.
+
+![Go](https://img.shields.io/badge/Go-00ADD8.svg?style=for-the-badge) 
+[BubbleTea](https://github.com/charmbracelet/bubbletea)
+
+![demo](./assets/demo.gif)
+
+## Сценарии вызова
+**Справка:**
+Вызов без аргументов, или с `--help`/`-h`
+```bash
+deta -h
+```
+
+## Поддерживаемые форматы
+|**Формат**|**Поддержка**|**Отображение**|
+|-------|-------|----|
+|csv|Реализовано|Таблица|
+|txt|В планах|-|
+|sql|Реализовано|Таблица|
+|json|Реализовано|Древовидная структура|
+|binary|Реализовано|Таблица|
+|toml|В планах|-|
+|yaml|В планах|-|
+
+## Установка
+Утилиту возможно установить несколькими способами:
+1. из [Releases](https://github.com/groknut/deta/releases).
+2. используя инструменты go
+```bash
+go install github.com/groknut/deta@latest
+```
+3. Собрать из исходников
+```bash
+make b-{os.name}
+```
+4. Используя сборочный Docker-контейнер
+```bash
+docker build -t deta-build .
+docker run --rm -v "$(pwd):/app" -v "$(pwd):/dist" deta-build env GOOS=$(OS_NAME) GOARCH=$(ARCH)
+```
